@@ -80,7 +80,7 @@ setup() {
     
     if [ -z "$GH_TOKEN" ]; then
         echo ">>> Starting interactive login (Device Code)..."
-        "${GH}" auth login --hostname github.com -p https -w
+        "${GH}" auth login --hostname github.com -p https
     else
         echo ">>> GH_TOKEN detected, skipping interactive login."
     fi
