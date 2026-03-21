@@ -157,18 +157,27 @@ case "$COMMAND" in
         sync_repo "${DIR_PERIPHERY}"
         ;;
     run-core)
-        pushd ./komodo-core
+        pushd "${DIR_CORE}"
         bash ./predeploy.sh -b prod
         docker compose up -d
         bash ./postdeploy.sh -b prod
         popd
         ;;
     run-periphery)
-        pushd ./komodo-periphery
+        pushd "${DIR_PERIPHERY}"
         bash ./predeploy.sh -b prod
         docker compose up -d
         bash ./postdeploy.sh -b prod
         popd
+        ;;
+    stop-core)
+        pushd "${DIR_CORE}"
+        docker compose down
+        popd
+        ;;
+    stop-periphery)
+        "${DIR_PERIPHERY}"
+        docker compose down
         ;;
     status)
         status_check
