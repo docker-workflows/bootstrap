@@ -74,7 +74,7 @@ check_gh_binary() {
     chmod +x "${GH}"
 }
 
-setup() {
+login() {
     check_gh_binary
 
     if [ -z "$GH_TOKEN" ]; then
@@ -134,27 +134,41 @@ status_check() {
 
 # --- Main Logic Route ---
 case "$COMMAND" in
-    setup)
-        setup
+    login)
+        login
         ;;
-    all)
+    install-all)
         echo "Deployment Mode: ${MODE^^}" # Prints mode in uppercase (e.g., PROD)
         sync_repo "${DIR_COMMON}"
         sync_repo "${DIR_CORE}"
         sync_repo "${DIR_PERIPHERY}"
         clean_auth
         ;;
-    common)
+    install-common-tools)
         echo "Deployment Mode: ${MODE^^}"
         sync_repo "${DIR_COMMON}"
         ;;
-    core)
+    install-core)
         echo "Deployment Mode: ${MODE^^}"
         sync_repo "${DIR_CORE}"
         ;;
-    periphery)
+    install-periphery)
         echo "Deployment Mode: ${MODE^^}"
         sync_repo "${DIR_PERIPHERY}"
+        ;;
+    run-core)
+        pushd ./komodo-core
+        bash ./predeploy.sh -b prod
+        docker compose up -d
+        bash ./postdeploy.sh -b prod
+        popd
+        ;;
+    run-periphery)
+        pushd ./komodo-periphery
+        bash ./predeploy.sh -b prod
+        docker compose up -d
+        bash ./postdeploy.sh -b prod
+        popd
         ;;
     status)
         status_check
