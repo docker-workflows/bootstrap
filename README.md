@@ -8,7 +8,7 @@ Está diseñado específicamente para entornos restrictivos o sistemas de archiv
 ### Preparación
 
 ````bash
-git clone https://github.com/docker-workflows/bootstrap.git ./bootstrap && chmod +x ./bootstrap/deploy.sh"
+git clone https://github.com/docker-workflows/bootstrap.git ./bootstrap
 ````
 
 
@@ -28,27 +28,27 @@ export GH_TOKEN=ghp_tu_token_secreto_aqui && ./bootstrap/deploy.sh install-all p
 
 **Todos los recursos**
 ````bash
- ./bootstrap/deploy.sh install-all prod
+bash ./bootstrap/deploy.sh install-all prod
 ````
 **Komodo-Core**
 ````bash
- ./bootstrap/deploy.sh install-core prod
+bash ./bootstrap/deploy.sh install-core prod
 ````
 **Komodo-Periphery**
 ````bash
- ./bootstrap/deploy.sh install-periphery prod
+bash ./bootstrap/deploy.sh install-periphery prod
 ````
 
 ### Despliegue
 
 ````bash
- ./bootstrap/deploy.sh run-all
+bash ./bootstrap/deploy.sh run-all
 ````
 **Komodo-Core**
 ````bash
- ./bootstrap/deploy.sh run-core
+bash ./bootstrap/deploy.sh run-core
 ````
 **Komodo-Periphery**
 ````bash
- ./bootstrap/deploy.sh run-periphery
+bash ./bootstrap/deploy.sh run-periphery
 ````
