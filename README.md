@@ -16,7 +16,7 @@ git clone https://github.com/docker-workflows/bootstrap.git ./bootstrap
 
 **Interactivo:**
 ````bash
-./bootstrap/deploy.sh login
+bash ./bootstrap/deploy.sh login
 ````
 **Automático:** pendiente de desarrollar
 ````bash
