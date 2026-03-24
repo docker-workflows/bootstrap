@@ -8,7 +8,7 @@ Está diseñado específicamente para entornos restrictivos o sistemas de archiv
 ### Preparación
 
 ````bash
-git clone https://github.com/docker-workflows/bootstrap.git ./bootstrap
+git clone https://github.com/bonzosoft/bootstrap.git ./bootstrap
 ````
 
 

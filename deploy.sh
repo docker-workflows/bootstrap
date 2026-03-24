@@ -20,7 +20,7 @@
 set -e 
 
 # --- Configuration ---
-ORG_NAME="docker-workflows"
+ORG_NAME="bonzosoft"
 DIR_COMMON="common-tools"
 DIR_CORE="komodo-core"
 DIR_PERIPHERY="komodo-periphery"
