@@ -107,7 +107,7 @@ sync_repo() {
     # Environment file setup using MODE
     if [ -f "${REPO_NAME}/.env.${MODE}" ]; then
         echo "[INFO ] Applying configuration: .env.${MODE} -> .env"
-        ln -sf "${REPO_NAME}/.env.${MODE}" "${REPO_NAME}/.env"
+        ln -sf "${REPO_NAME}/.env.${MODE}" "./.env"
     else
         echo "[WARN ]: .env.${MODE} not found in ${REPO_NAME}. Skipping env setup."
     fi
