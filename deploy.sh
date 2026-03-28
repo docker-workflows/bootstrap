@@ -37,7 +37,8 @@ show_help() {
     echo "Usage: ./deploy.sh [command] [mode]"
     echo ""
     echo "Commands:"
-    echo "  login                   Interactive login via Device Code"
+    echo "  login                   Interactive login to Github via Device Code"
+    echo "  logout                  Logout from Github"
     echo "  install-all             Sync ALL repos (common -> core -> periphery) and clean credentials"
     echo "  install-common-tools    Sync Common Tools only"
     echo "  install-core            Sync Komodo Core only"
@@ -127,12 +128,14 @@ case "$COMMAND" in
     login)
         login
         ;;
+    logout)
+        clean_auth
+        ;;
     install-all)
         echo "Deployment Mode: ${MODE^^}" # Prints mode in uppercase (e.g., PROD)
         sync_repo "${COMMONDIR}"
         sync_repo "${COREDIR}"
         sync_repo "${PERIPHERYDIR}"
-        clean_auth
         ;;
     install-common-tools)
         echo "Deployment Mode: ${MODE^^}"
