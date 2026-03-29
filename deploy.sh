@@ -112,7 +112,7 @@ sync_repo() {
 		ln -sf "./.env.${MODE}" "${REPO_NAME}/.env" > /dev/null
 	else
 		printf "[WARNING...] .env.%s not found in '%s'.\n" ${MODE} ${REPO_NAME}
-		return 1
+		return 0
 	fi
 
 	printf "[INFO......] Repository '%s' successfully cloned.\n" ${REPO_NAME} 
