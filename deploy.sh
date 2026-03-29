@@ -115,6 +115,7 @@ sync_repo() {
 		return 1
 	fi
 
+	printf "[INFO......] Repository '%s' successfully cloned.\n" ${REPO_NAME} 
 	return 0
 }
 
