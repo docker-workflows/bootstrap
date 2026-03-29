@@ -21,10 +21,7 @@ GITBRANCH="main"
 COMMAND="$1"
 MODE="${2:-prod}" # Environment mode (prod|dev). Defaults to 'prod'
 
-# Dynamically find where this script is located
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-
-# Dynamically find the 'gh' binary inside the gh_..._linux_amd64 folder structure
 GH_BINARY=$(find "${SCRIPTDIR}" -type f -path "*/gh_*_linux_amd64*/gh" | head -n 1)
 
 # Temporary directory for session credentials (destroyed after use)
@@ -114,7 +111,7 @@ sync_repo() {
 		printf "[INFO......] Applying configuration: .env.%s -> .env\n" ${MODE}
 		ln -sf "./.env.${MODE}" "${REPO_NAME}/.env" > /dev/null
 	else
-		printf "[ERROR.....] .env.%s not found in '%s'.\n" ${MODE} ${REPO_NAME}
+		printf "[WARNING...] .env.%s not found in '%s'.\n" ${MODE} ${REPO_NAME}
 		return 1
 	fi
 
