@@ -24,21 +24,21 @@ export GH_TOKEN=<token>
 ### Instalación
 **Komodo-Core**
 ````bash
-bash ./bootstrap/deploy.sh install-core prod
+bash ./bootstrap/deploy.sh install-core
 ````
 **Komodo-Periphery**
 ````bash
-bash ./bootstrap/deploy.sh install-periphery prod
+bash ./bootstrap/deploy.sh install-periphery
 ````
 
 ### Despliegue
 **Komodo-Core**
 ````bash
-bash ./bootstrap/deploy.sh run-core
+bash ./bootstrap/deploy.sh run-core prod
 ````
 **Komodo-Periphery**
 ````bash
-bash ./bootstrap/deploy.sh run-periphery
+bash ./bootstrap/deploy.sh run-periphery prod
 ````
 
 ### Parada
