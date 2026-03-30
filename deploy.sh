@@ -20,9 +20,9 @@ PERIPHERYDIR="komodo-periphery"
 # Capture arguments
 COMMAND="${1:?}"
 if [[ "${COMMAND}" == run* ]]; then
-	MODE="${2:?}"
+	realm="${2:?}"
 else
-	MODE=""
+	realm=""
 fi
 
 # Path initialization
@@ -134,7 +134,7 @@ case "$COMMAND" in
 		sync_repo "${PERIPHERYDIR}"
 		;;
 	run-core)
-		printf "[INFO]\t Deployment Mode: %s.\n" ${MODE^^}
+		printf "[INFO]\t Deployment Mode: %s.\n" ${realm}
 		pushd "${COREDIR}" > /dev/null
 		if [[ -f "./predeploy.sh" ]]; then
 			bash ./predeploy.sh --realm "${realm}"
@@ -149,11 +149,11 @@ case "$COMMAND" in
 		printf "[INFO]\t Deployment Mode: %s.\n" ${MODE^^}
 		pushd "${PERIPHERYDIR}" > /dev/null
 		if [[ -f "./predeploy.sh" ]]; then
-			bash ./predeploy.sh --realm "${realm}"
+			bash "./predeploy.sh" --realm "${realm}"
 		fi
 		docker compose up -d
 		if [[ -f "./postdeploy.sh" ]]; then
-			bash ./postdeploy.sh --realm "${realm}"
+			bash "./postdeploy.sh" --realm "${realm}"
 		fi
 		popd > /dev/null
 		;;
