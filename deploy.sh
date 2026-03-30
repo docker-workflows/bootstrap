@@ -19,7 +19,7 @@ PERIPHERYDIR="komodo-periphery"
 
 # Capture arguments
 COMMAND="${1:?}"
-if [[ "${COMMAND}" == install* ]]; then
+if [[ "${COMMAND}" == run* ]]; then
 	MODE="${2:?}"
 else
 	MODE=""
@@ -40,10 +40,10 @@ show_help() {
 	echo "Commands:"
 	echo "  login                   Interactive login to Github via Device Code"
 	echo "  logout                  Remove GH session credentials"
-	echo "  install-core            Install Komodo Core, 'mode' parameter mandatory."
-	echo "  install-periphery       Install Komodo Periphery, 'mode' parameter mandatory."
-	echo "  run-core                Run Komodo Core via Docker Compose"
-	echo "  run-periphery           Run Komodo Periphery via Docker Compose"
+	echo "  install-core            Install Komodo Core"
+	echo "  install-periphery       Install Komodo Periphery"
+	echo "  run-core                Run Komodo Core via Docker Compose, 'mode' parameter mandatory.""
+	echo "  run-periphery           Run Komodo Periphery via Docker Compose, 'mode' parameter mandatory.""
 	echo "  stop-core               Stop Core containers"
 	echo "  stop-periphery          Stop Periphery containers"
 	echo ""
