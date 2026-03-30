@@ -18,8 +18,8 @@ PERIPHERYDIR="komodo-periphery"
 #GITBRANCH="main"
 
 # Capture arguments
-COMMAND="$1"
-MODE="${2:-prod}" # Environment mode (prod|dev). Defaults to 'prod'
+COMMAND="${1:?}"
+MODE="${2:?}"
 
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 GH_BINARY=$(find "${SCRIPTDIR}" -type f -path "*/gh_*_linux_amd64*/gh" | head -n 1)
@@ -28,9 +28,7 @@ GH_BINARY=$(find "${SCRIPTDIR}" -type f -path "*/gh_*_linux_amd64*/gh" | head -n
 export GH_CONFIG_DIR="/tmp/komodo-gh-config"
 export GIT_CONFIG_GLOBAL="${GH_CONFIG_DIR}/gitconfig"
 
-export GH_TOKEN=""
 
-# Functions
 show_help() {
 	echo "Usage: ./deploy.sh [command] [mode]"
 	echo ""
@@ -63,7 +61,7 @@ check_gh_binary() {
 github_login() {
 	check_gh_binary
 
-	if [ -z "$GH_TOKEN" ]; then
+	if [ ! -v "GH_TOKEN" ]; then
 		printf "[INFO......] Starting interactive login.\n"
 		"${GH_BINARY}" auth login --hostname github.com --git-protocol https --web
 	else
