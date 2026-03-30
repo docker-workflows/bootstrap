@@ -115,28 +115,6 @@ sync_repo() {
 	return 0
 }
 
-status_check() {
-	printf "[INFO......] Status:\n"
-	if [[ -d "${COMMONDIR}" ]]; then
-		printf "[OK........] Common folder exists.\n"
-	else
-		printf "[ERROR.....] Common folder missing.\n"
-	fi
-	if [[ -d "${COREDIR}" ]]; then
-		printf "[OK........] Komodo Core folder exists.\n"
-	else
-		printf "[ERROR.....] Komodo Core folder missing.\n"
-	fi
-	if [[ -d "${PERIPHERYDIR}" ]]; then
-		printf "[OK........] Komodo Periphery folder exists.\n"
-	else
-		printf "[ERROR.....] Komodo Periphery folder missing.\n"
-	fi
-
-	return 0
-}
-
-
 case "$COMMAND" in
 	login)
 		github_login
@@ -144,18 +122,14 @@ case "$COMMAND" in
 	logout)
 		github_logout
 		;;
-	install-all)
-		printf "Deployment Mode: %s.\n" ${MODE^^}
-		sync_repo "${COMMONDIR}"
-		sync_repo "${COREDIR}"
-		sync_repo "${PERIPHERYDIR}"
-		;;
 	install-core)
 		printf "Deployment Mode: %s.\n" ${MODE^^}
+		sync_repo "${COMMONDIR}"
 		sync_repo "${COREDIR}"
 		;;
 	install-periphery)
 		printf "Deployment Mode: %s.\n" ${MODE^^}
+		sync_repo "${COMMONDIR}"
 		sync_repo "${PERIPHERYDIR}"
 		;;
 	run-core)
@@ -189,9 +163,6 @@ case "$COMMAND" in
 		pushd "${PERIPHERYDIR}" > /dev/null
 		docker compose down
 		popd > /dev/null
-		;;
-	status)
-		status_check
 		;;
 	*)
 		show_help
