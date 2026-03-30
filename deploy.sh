@@ -126,16 +126,15 @@ case "$COMMAND" in
 		github_logout
 		;;
 	install-core)
-		printf "Deployment Mode: %s.\n" ${MODE^^}
 		sync_repo "${COMMONDIR}"
 		sync_repo "${COREDIR}"
 		;;
 	install-periphery)
-		printf "Deployment Mode: %s.\n" ${MODE^^}
 		sync_repo "${COMMONDIR}"
 		sync_repo "${PERIPHERYDIR}"
 		;;
 	run-core)
+		printf "Deployment Mode: %s.\n" ${MODE^^}
 		pushd "${COREDIR}" > /dev/null
 		if [[ -f "./predeploy.sh" ]]; then
 			bash ./predeploy.sh "${MODE}"
@@ -147,6 +146,7 @@ case "$COMMAND" in
 		popd > /dev/null
 		;;
 	run-periphery)
+		printf "Deployment Mode: %s.\n" ${MODE^^}
 		pushd "${PERIPHERYDIR}" > /dev/null
 		if [[ -f "./predeploy.sh" ]]; then
 			bash ./predeploy.sh "${MODE}"
