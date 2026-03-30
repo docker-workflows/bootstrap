@@ -19,7 +19,11 @@ PERIPHERYDIR="komodo-periphery"
 
 # Capture arguments
 COMMAND="${1:?}"
-MODE="${2:?}"
+if [[ "${COMMAND}" == install* ]]; then
+	MODE="${2:?}"
+else
+	MODE=""
+fi
 
 # Path initialization
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
@@ -31,13 +35,13 @@ export GIT_CONFIG_GLOBAL="${GH_CONFIG_DIR}/gitconfig"
 
 
 show_help() {
-	echo "Usage: ./deploy.sh [command] [mode]"
+	echo "Usage: ./deploy.sh command [mode]"
 	echo ""
 	echo "Commands:"
 	echo "  login                   Interactive login to Github via Device Code"
 	echo "  logout                  Remove GH session credentials"
-	echo "  install-core            Sync Komodo Core only"
-	echo "  install-periphery       Sync Komodo Periphery only"
+	echo "  install-core            Install Komodo Core, 'mode' parameter mandatory."
+	echo "  install-periphery       Install Komodo Periphery, 'mode' parameter mandatory."
 	echo "  run-core                Run Komodo Core via Docker Compose"
 	echo "  run-periphery           Run Komodo Periphery via Docker Compose"
 	echo "  stop-core               Stop Core containers"
