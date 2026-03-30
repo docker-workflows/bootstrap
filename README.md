@@ -17,7 +17,7 @@ bash ./bootstrap/deploy.sh login
 ````
 **Automático:** pendiente de desarrollar
 ````bash
-export GH_TOKEN=ghp_tu_token_secreto_aqui
+export GH_TOKEN=<token>
 ````
 
 
@@ -50,7 +50,6 @@ bash ./bootstrap/deploy.sh stop-core
 ````bash
 bash ./bootstrap/deploy.sh stop-periphery
 ````
-
 
 ### Logout
 **Interactivo:**
