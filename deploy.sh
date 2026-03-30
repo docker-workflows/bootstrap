@@ -52,7 +52,7 @@ show_help() {
 
 check_gh_binary() {
 	if [ -z "${GH_BINARY}" ] || [ ! -f "${GH_BINARY}" ]; then 
-		printf "[ERROR.....] Binary 'gh' not found.\n"
+		printf "[ERRO]\t Binary 'gh' not found.\n"
 		exit 1
 	fi
 	# Ensure the binary is executable
@@ -63,10 +63,10 @@ github_login() {
 	check_gh_binary
 
 	if [ ! -v "GH_TOKEN" ]; then
-		printf "[INFO......] Starting interactive login.\n"
+		printf "[INFO]\t\t Starting interactive login.\n"
 		"${GH_BINARY}" auth login --hostname github.com --git-protocol https --web
 	else
-		printf "[INFO......] Detected 'GH_TOKEN', skipping interactive login.\n"
+		printf "[INFO]\t Detected 'GH_TOKEN', skipping interactive login.\n"
 	fi
 	
 	"${GH_BINARY}" auth setup-git
@@ -75,7 +75,7 @@ github_login() {
 }
 
 github_logout() {
-	printf "[INFO......] Cleaning GH session credentials.\n"
+	printf "[INFO]\t Cleaning GH session credentials.\n"
 	rm -rf "${GH_CONFIG_DIR}" > /dev/null
 
 	return 0
@@ -87,13 +87,13 @@ sync_repo() {
 	check_gh_binary
 	
 	if [ ! -d "${REPO_NAME}/.git" ]; then
-		printf "[INFO......] Cloning private repository '%s'.\n" ${REPO_NAME} 
+		printf "[INFO]\t Cloning private repository '%s'.\n" ${REPO_NAME} 
 		"${GH_BINARY}" repo clone "${ORGNAME}/${REPO_NAME}" "${REPO_NAME}" -- --branch "${GITBRANCH:-main}" > /dev/null
 		pushd "${REPO_NAME}" > /dev/null
 		git submodule update --init --recursive > /dev/null
 		popd > /dev/null
 	else
-		printf "[INFO......] Local repository '%s' found. Forcing update.\n" ${REPO_NAME}
+		printf "[INFO]\t Local repository '%s' found. Forcing update.\n" ${REPO_NAME}
 		pushd "${REPO_NAME}" > /dev/null
 		git fetch origin "${GITBRANCH:-main}" > /dev/null
 		git reset --hard "origin/${GITBRANCH:-main}" > /dev/null
@@ -103,14 +103,14 @@ sync_repo() {
 
 	# Environment file setup using MODE
 	if [ -f "${REPO_NAME}/.env.${MODE}" ]; then
-		printf "[INFO......] Applying configuration: .env.%s -> .env\n" ${MODE}
+		printf "[INFO]\t Applying configuration: .env.%s -> .env\n" ${MODE}
 		ln -sf "./.env.${MODE}" "${REPO_NAME}/.env" > /dev/null
 	else
-		printf "[WARNING...] .env.%s not found in '%s'.\n" ${MODE} ${REPO_NAME}
+		printf "[WARN]\t .env.%s not found in '%s'.\n" ${MODE} ${REPO_NAME}
 		return 0
 	fi
 
-	printf "[INFO......] Repository '%s' successfully cloned.\n" ${REPO_NAME} 
+	printf "[INFO]\t Repository '%s' successfully cloned.\n" ${REPO_NAME} 
 	return 0
 }
 
