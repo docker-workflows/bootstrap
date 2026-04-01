@@ -44,7 +44,7 @@ export GIT_CONFIG_GLOBAL="${GH_CONFIG_DIR}/gitconfig"
 
 
 show_help() {
-	echo "Usage: ./deploy.sh command [mode]"
+	echo "Usage: ./deploy command [mode]"
 	echo ""
 	echo "Commands:"
 	echo "  login                    Interactive login to Github via Device Code"
@@ -57,10 +57,10 @@ show_help() {
 	echo "  stop-periphery           Stop Periphery containers"
 	echo ""
 	echo "Examples:"
-	echo "  ./deploy.sh login"
-	echo "  ./deploy.sh install-core"
-	echo "  ./deploy.sh install-periphery"
-	echo "  ./deploy.sh run-core prod"
+	echo "  ./deploy login"
+	echo "  ./deploy install-core"
+	echo "  ./deploy install-periphery"
+	echo "  ./deploy run-core prod"
 }
 
 check_gh_binary() {
@@ -145,24 +145,24 @@ case "$COMMAND" in
 	run-core)
 		printf "[INFO]\t Deployment mode: %s.\n" ${realm}
 		pushd "${COREDIR}" > /dev/null
-		if [[ -f "./predeploy.sh" ]]; then
-			bash ./predeploy.sh --realm "${realm}"
+		if [[ -f "./predeploy" ]]; then
+			bash "./predeploy" --realm "${realm}"
 		fi
 		docker compose up -d
-		if [[ -f "./postdeploy.sh" ]]; then
-			bash ./postdeploy.sh --realm "${realm}"
+		if [[ -f "./postdeploy" ]]; then
+			bash "./postdeploy" --realm "${realm}"
 		fi
 		popd > /dev/null
 		;;
 	run-periphery)
 		printf "[INFO]\t Deployment mode: %s.\n" ${realm}
 		pushd "${PERIPHERYDIR}" > /dev/null
-		if [[ -f "./predeploy.sh" ]]; then
-			bash "./predeploy.sh" --realm "${realm}"
+		if [[ -f "./predeploy" ]]; then
+			bash "./predeploy" --realm "${realm}"
 		fi
 		docker compose up -d
-		if [[ -f "./postdeploy.sh" ]]; then
-			bash "./postdeploy.sh" --realm "${realm}"
+		if [[ -f "./postdeploy" ]]; then
+			bash "./postdeploy" --realm "${realm}"
 		fi
 		popd > /dev/null
 		;;
