@@ -38,7 +38,17 @@ bash ./bootstrap/deploy.sh run-core prod
 ````
 
 #### 3.3 Configuración del Server
-TBR
+**Login**
+Se debe hacer login en la WebUI de Core y comprobar que la conexión con el Worker se ha realizado correctamente.
+
+**Validación**
+Seguramente muestre el aviso de ``NOT OK``. Esto se debe a que la clave pública de Core no ha podido ser validada por Periphery debido a permisos de archivos.
+Si entramos en la configuración del servidor, podemos aceptar la clave en ``Invalid Pubkey``.
+
+**Obtención de Core Pub Key**
+En ``Settings`` podemos obtener la clave pública del servidor.
+Con esta clave la podemos actualizar en el repositorio para que esté disponbiel apra todos los Workers.
+En caso de querer personalizarla, podemos usar ``compose.override.yaml`` en el stack de Periphery.
 
 ### 4. Komodo-Periphery
 
