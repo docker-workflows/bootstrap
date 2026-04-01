@@ -10,6 +10,15 @@
 set -euo pipefail
 
 
+# Función que se ejecuta si ocurre un error
+function error_exit {
+    echo "⚠️ Ha ocurrido un error en el script. Saliendo..."
+}
+
+# Configurar trap para errores
+trap error_exit ERR
+
+
 # Configuration
 ORGNAME="bonzosoft"
 COMMONDIR="common-tools"
