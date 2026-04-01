@@ -137,10 +137,20 @@ case "$COMMAND" in
 	install-core)
 		sync_repo "${COMMONDIR}"
 		sync_repo "${COREDIR}"
+		pushd "${COREDIR}" > /dev/null
+		if [[ -f "./predeploy" ]]; then
+			bash "./predeploy" --realm "${realm}"
+		fi
+		popd > /dev/null
 		;;
 	install-periphery)
 		sync_repo "${COMMONDIR}"
 		sync_repo "${PERIPHERYDIR}"
+		pushd "${PERIPHERYDIR}" > /dev/null
+		if [[ -f "./predeploy" ]]; then
+			bash "./predeploy" --realm "${realm}"
+		fi
+		popd > /dev/null
 		;;
 	run-core)
 		printf "[INFO]\t Deployment mode: %s.\n" ${realm}
