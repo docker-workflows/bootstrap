@@ -12,11 +12,13 @@ git clone https://github.com/bonzosoft/bootstrap.git ./bootstrap
 
 
 ### 2. Login
-**Interactivo:**
+
+#### 2.1 Interactivo
 ````bash
 bash ./bootstrap/deploy.sh login
 ````
-**Automático:**
+
+#### 2.2 Automático
 Este método está pendiente de desarrollar y no parece necesario hacerlo.
 ````bash
 export GH_TOKEN=<token>
