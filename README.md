@@ -5,13 +5,13 @@ Está diseñado específicamente para entornos restrictivos o sistemas de archiv
 
 
 
-### Descarga
+### 1. Descarga
 ````bash
 git clone https://github.com/bonzosoft/bootstrap.git ./bootstrap
 ````
 
 
-### Login
+### 2. Login
 **Interactivo:**
 ````bash
 bash ./bootstrap/deploy.sh login
@@ -23,71 +23,48 @@ export GH_TOKEN=<token>
 ````
 
 
-### Instalación
+### 3. Komodo-Core
 
-| Komodo-Core                                 | Komodo-Periphery                                 |
-|---------------------------------------------|--------------------------------------------------|
-| ``bash ./bootstrap/deploy.sh install-core`` | ``bash ./bootstrap/deploy.sh install-periphery`` |
-
-
-### Despliegue
-| Komodo-Core                                  | Komodo-Periphery                                  |
-|----------------------------------------------|---------------------------------------------------|
-| ``bash ./bootstrap/deploy.sh run-core prod`` | ``bash ./bootstrap/deploy.sh run-periphery prod`` |
-
-
-### Parada
-| Komodo-Core                              | Komodo-Periphery                              |
-|------------------------------------------|-----------------------------------------------|
-| ``bash ./bootstrap/deploy.sh stop-core`` | ``bash ./bootstrap/deploy.sh stop-periphery`` |
-
-### Logout
-
-````bash
-bash ./bootstrap/deploy.sh logout
-````
-
-
----
-
-> [!WARNING] 
-> DEPRECATED FROM HERE
-
-### Instalación
-**Komodo-Core**
+#### 3.1 Instalación de Core
 ````bash
 bash ./bootstrap/deploy.sh install-core
 ````
-**Komodo-Periphery**
+
+#### 3.2 Despliegue de Core
+````bash
+bash ./bootstrap/deploy.sh run-core prod
+````
+
+#### 3.3 Configuración del Server
+TBR
+
+### 4. Komodo-Periphery
+
+#### 4.1 Instalación de Periphery
 ````bash
 bash ./bootstrap/deploy.sh install-periphery
 ````
 
-
-### Despliegue
-**Komodo-Core**
-````bash
-bash ./bootstrap/deploy.sh run-core prod
-````
-**Komodo-Periphery**
+#### 4.2 Despliegue de Periphery
 ````bash
 bash ./bootstrap/deploy.sh run-periphery prod
 ````
 
+#### 4.3 Configuración del Server
+TBR
 
-### Parada
-**Komodo-Core**
+### 5. Logout
+````bash
+bash ./bootstrap/deploy.sh logout
+````
+
+### 6. Parada
+#### 6.1 Parada de Core
 ````bash
 bash ./bootstrap/deploy.sh stop-core
 ````
-**Komodo-Periphery**
+
+#### 6.2 Parada de Periphery
 ````bash
 bash ./bootstrap/deploy.sh stop-periphery
-````
-
-
-### Logout
-
-````bash
-bash ./bootstrap/deploy.sh logout
 ````
