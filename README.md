@@ -29,6 +29,12 @@ export GH_TOKEN=<token>
 |---------------------------------------------|--------------------------------------------------|
 | ``bash ./bootstrap/deploy.sh install-core`` | ``bash ./bootstrap/deploy.sh install-periphery`` |
 
+
+---
+
+> deprecated
+
+### Instalación
 **Komodo-Core**
 ````bash
 bash ./bootstrap/deploy.sh install-core
