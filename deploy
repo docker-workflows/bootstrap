@@ -28,7 +28,7 @@ PERIPHERYDIR="komodo-periphery"
 
 # Capture arguments
 COMMAND="${1:?}"
-if [[ "${COMMAND}" == run* ]]; then
+if [[ "${COMMAND}" == run* || "${COMMAND}" == install* ]]; then
 	realm="${2:?}"
 else
 	realm=""
