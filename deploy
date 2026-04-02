@@ -159,7 +159,7 @@ case "$COMMAND" in
 		if [[ -f "./predeploy" ]]; then
 			bash "./predeploy" --realm "${realm}"
 		fi
-		docker compose up -d
+		docker compose -p ix-komodo-core up -d # usign ix- prefix for TrueNAS Scale compatibility
 		if [[ -f "./postdeploy" ]]; then
 			bash "./postdeploy" --realm "${realm}"
 		fi
@@ -171,7 +171,7 @@ case "$COMMAND" in
 		if [[ -f "./predeploy" ]]; then
 			bash "./predeploy" --realm "${realm}"
 		fi
-		docker compose up -d
+		docker compose -p ix-komodo-periphery up -d # usign ix- prefix for TrueNAS Scale compatibility
 		if [[ -f "./postdeploy" ]]; then
 			bash "./postdeploy" --realm "${realm}"
 		fi
