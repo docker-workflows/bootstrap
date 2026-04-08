@@ -128,6 +128,8 @@ sync_repo() {
 	return 0
 }
 
+
+
 case "$COMMAND" in
 	login)
 		github_login

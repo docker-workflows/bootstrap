@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Carpeta base de la plataforma
+BASE_DIR="$(pwd)/platform-bootstrap/bin"
+
+# El primer argumento es el comando que quieres ejecutar
+CMD="$1"
+shift  # Elimina el primer argumento para que $@ sean solo parámetros del comando
+
+# Comprobar que el script existe
+if [ ! -f "$BASE_DIR/$CMD" ]; then
+    echo "Error: comando '$CMD' no encontrado en platform-bootstrap/bin"
+    exit 1
+fi
+
+# Ejecutar el script con bash pasando todos los parámetros
+bash "$BASE_DIR/$CMD" "$@"
