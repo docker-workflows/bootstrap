@@ -71,6 +71,7 @@ function main {
             else
                 printf "[ERRO]\t Invalid argument '%s'.\n" "${target}"
                 return 1
+            fi
             ;;
     esac
 }
