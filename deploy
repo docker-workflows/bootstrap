@@ -18,15 +18,19 @@ GH_VERSION="2.88.1"
 GH_CONFIGDIR="/tmp/gh-config"
 ORGANIZATION="bonzosoft"
 COMMON="common-tools"
-STARTSCRIPT="predeploy"
+PREDEPLOY="predeploy"
 
 ### FUNCTIONS ##################################################################
 
 function main {    
-    command=""
-    target=""
+    local param1="${1:?A command must be provided.}"
+    local param2="${2}"
 
-    case "${1}" in
+    if [[ ! -x "${GH_BINARY}" ]]; then
+        gh_install
+    fi
+
+    case "${param1}" in
         "login")
             gh_login
             ;;
@@ -35,51 +39,27 @@ function main {
             ;;
         "install")
             gh_install
+            ;;
         *)
-            case "${2}" in
+            case "${param2}" in
                 "pull")
-                    gh_pull "${1}"
+                    gh_pull "${param1}"
                     ;;
                 "start")
-                    compose_start "${1}"
+                    compose_start "${param1}"
                     ;;
                 "stop")
-                    compose_start "${1}"
+                    compose_stop "${param1}"
                     ;;
                 *)
                     printf "[ERRO]\t Unknown parameter combination.\n"
                     return 1
                     ;;
             esac
-    esac
-
-
-    if [[ -z ${command} ]]; then
-        printf "[ERRO]\ A valid command parameter must be provided.\n"
-    fi
-
-    if [[ ! -x ${GH_BINARY} ]]; then
-        gh_download
-    fi
-
-    case "${command}" in
-        "start"|"stop"|"pull")
-            if [[ -z "${target}" ]]; then
-                printf "[ERRO]\t Missing target for action.\n" 
-                return 1
-            else
-                "${command}" "${target}"
-            fi
-            ;;
-        *)
-            if [[ -z "${target}" ]]; then
-                "${command}"
-            else
-                printf "[ERRO]\t Invalid argument '%s'.\n" "${target}"
-                return 1
-            fi
             ;;
     esac
+
+    return 0
 }
 
 function gh_check {
@@ -134,6 +114,7 @@ function gh_install {
 
     printf "[INFO]\t Downloading '%s'.\n" "${common}"
     gh_pull "${common}"
+    #git clone "https://github.com/${ORGANIZATION}/${common}.git" "${common}"
 
 
     printf "[INFO]\t Success.\n"
@@ -205,18 +186,19 @@ function gh_pull {
 }
 
 function compose_start {
-    name="${:?}"
-    script="${STARTSCRIPT:?}"
+    local name="${1:?}"
+    local predeploy="${PREDEPLOY:?}"
 
     if [[ -d "${name}" ]]; then
         printf "[INFO]\t Starting '%s'.\n" "${name}"
     else
         printf "[ERRO]\t Target '%s' not available.\n" "${name}"
+        return 1
     fi
 
     pushd "./${name}" > /dev/null
-    if [[ -f "./${script}" ]]; then
-        bash "./${script}" --realm "prod"
+    if [[ -f "./${predeploy}" ]]; then
+        bash "./${predeploy}" --realm "prod"
     fi
     docker compose up -d
     #docker compose -p "ix-${name}" up -d
@@ -224,12 +206,13 @@ function compose_start {
 }
 
 function compose_stop {
-    name="${:?}"
+    local name="${1:?}"
     
     if [[ -d "${name}" ]]; then
         printf "[INFO]\t Stopping '%s'.\n" "${name}"
     else
         printf "[ERRO]\t Target '%s' not available.\n" "${name}"
+        return 1
     fi
 
     pushd "./${name}" > /dev/null
