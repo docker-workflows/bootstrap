@@ -109,3 +109,16 @@ bash ./bootstrap/deploy stop-core
 ````bash
 bash ./bootstrap/deploy stop-periphery
 ````
+
+
+
+# Alternativa
+
+Descargar el script:
+````bash
+curl -s https://raw.githubusercontent.com/bonzosoft/bootstrap/main/deploy | bash
+````
+o
+````bash
+wget -qO- https://raw.githubusercontent.com/bonzosoft/bootstrap/main/deploy | bash
+````

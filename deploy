@@ -1,224 +1,203 @@
 #!/bin/bash
-# ==============================================================================
-# KOMODO DEPLOYMENT SCRIPT (Revisado)
-# ==============================================================================
-# Automates deployment of Komodo Core, Periphery, and Common Tools
-# for read-only systems (TrueNAS SCALE) using bundled GH CLI.
-# ==============================================================================
 
+### ERROR MANAGEMENT ###########################################################
 
 set -euo pipefail
 
-
-# Función que se ejecuta si ocurre un error
-function error_exit {
-    echo "⚠️ Ha ocurrido un error en el script. Saliendo..."
+function trap_error {
+    printf "[ERRO]\t An unexpected error has ocurred. Exiting...\n"
 }
 
-# Configurar trap para errores
-trap error_exit ERR
+trap trap_error ERR
+
+### END ERROR MANAGEMENT #######################################################
 
 
-# Configuration
-ORGNAME="bonzosoft"
-COMMONDIR="common-tools"
-COREDIR="komodo-core"
-PERIPHERYDIR="komodo-periphery"
-NPMPLUSDIR="npmplus"
-#GITBRANCH="main"
+GH_BINARY="./bin/gh"
+GH_VERSION="2.88.1"
+GH_CONFIGDIR="/tmp/gh-config"
+ORGANIZATION="bonzosoft"
+COMMON="common-tools"
 
-# Capture arguments
-COMMAND="${1:?}"
-if [[ "${COMMAND}" == run* || "${COMMAND}" == install* ]]; then
-	realm="${2:?}"
-else
-	realm=""
-fi
+### FUNCTIONS ##################################################################
 
-# Path initialization
-SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-GH_BINARY=$(find "${SCRIPTDIR}" -type f -path "*/gh_*_linux_amd64*/gh" | head -n 1)
+function main {    
+    command=""
+    target=""
+    for param in "${@}"; do
+        case "${param}" in
+            "login")
+                command="gh_login"
+                ;;
+            "logout")
+                command="gh_logout"
+                ;;
+            "pull")
+                command="gh_pull"
+                ;;
+            "start")
+                command="compose_start"
+                ;;
+            "stop")
+                command="compose_stop"
+                ;; 
+            *)
+                printf "[ERRO]\t Unknow parameter '%s'.\n" "${param}"
+                return 1
+                ;;
+        esac
+    done
 
-# Temporary directory for session credentials
-export GH_CONFIG_DIR="/tmp/komodo-gh-config"
-export GIT_CONFIG_GLOBAL="${GH_CONFIG_DIR}/gitconfig"
+    if [[ -z ${command} ]]; then
+        printf "[ERRO]\ A valid command parameter must be provided.\n"
+    fi
 
+    if [[ ! -x ${GH_BINARY} ]]; then
+        gh_download
+    fi
 
-show_help() {
-	echo "Usage: ./deploy command [mode]"
-	echo ""
-	echo "Commands:"
-	echo "  login                    Interactive login to Github via Device Code"
-	echo "  logout                   Remove GH session credentials"
-	echo "  install-core             Install Komodo Core"
-	echo "  install-periphery        Install Komodo Periphery"
-	echo "  run-core <prod|dev>      Run Komodo Core via Docker Compose, 'mode' parameter mandatory."
-	echo "  run-periphery <prod|dev> Run Komodo Periphery via Docker Compose, 'mode' parameter mandatory."
-	echo "  stop-core                Stop Core containers"
-	echo "  stop-periphery           Stop Periphery containers"
-	echo ""
-	echo "Examples:"
-	echo "  ./deploy login"
-	echo "  ./deploy install-core"
-	echo "  ./deploy install-periphery"
-	echo "  ./deploy run-core prod"
+    case "${command}" in
+        "start"|"stop"|"pull")
+            if [[ -z "${target}" ]]; then
+                printf "[ERRO]\t Missing target for action.\n" 
+                return 1
+            else
+                "${command}" "${target}"
+            fi
+            ;;
+        *)
+            if [[ -z "${target}" ]]; then
+                "${command}"
+            else
+                printf "[ERRO]\t Invalid argument '%s'.\n" "${target}"
+                return 1
+            ;;
+    esac
 }
 
-check_gh_binary() {
-	if [ -z "${GH_BINARY}" ] || [ ! -f "${GH_BINARY}" ]; then 
-		printf "[ERRO]\t Binary 'gh' not found.\n"
-		exit 1
-	fi
-	# Ensure the binary is executable
-	chmod +x "${GH_BINARY}"
+function gh_check {
+    local binary=${GH_BINARY}
+    local configdir=${GH_CONFIGDIR}
+
+    # validation
+    if [[ -z "${binary}" ]]; then
+        printf "[ERRO]\t 'GH' path not defined.\n"
+        return 1
+    fi
+
+    if [[ ! -x "${binary}" ]]; then
+        printf "[ERRO]\t 'GH' binary not found.\n"
+        return 1
+    fi
+
+    if [[ -z "${configdir}" ]]; then
+        printf "[ERRO]\t GH config directory not defined.\n"
+        return 1
+    fi
+
+    return 0
 }
 
-github_login() {
-	check_gh_binary
+function gh_download {
+    printf "[INFO]\t Downloading 'GH'.\n"
 
-	if [ ! -v "GH_TOKEN" ]; then
-		printf "[INFO]\t\t Starting interactive login.\n"
-		"${GH_BINARY}" auth login --hostname github.com --git-protocol https --web
-	else
-		printf "[INFO]\t Detected 'GH_TOKEN', skipping interactive login.\n"
-	fi
-	
-	"${GH_BINARY}" auth setup-git
+    local binary=${GH_BINARY}
+    local version=${GH_VERSION}
+    local tempfile=$(mktemp)
 
-	return 0
+    # validation
+    if [[ -z "${GH_BINARY}" ]]; then
+        printf "[ERRO]\t 'GH' path not defined.\n"
+        return 1
+    fi
+
+    if [[ -z "${version}" ]]; then
+        printf "[ERRO]\t 'GH' version not defined.\n"
+        return 1
+    fi
+
+    # logic
+    wget --quiet --output-document="${tempfile}" "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_amd64.tar.gz"
+    mkdir -p "$(dirname "${binary}")"
+    tar --extract --gzip --strip-components=2 --directory="$(dirname "${binary}")" --file="${tempfile}" "gh_${version}_linux_amd64/bin/gh"
+    chmod +x "${binary}"
+    rm --force "${tempfile}"
+
+    printf "[INFO]\t Success.\n"
+    return 0
 }
 
-github_logout() {
-	printf "[INFO]\t Cleaning GH session credentials.\n"
-	rm -rf "${GH_CONFIG_DIR}" > /dev/null
+function gh_login {
+    printf "[INFO]\t Starting GitHub interactive login.\n"
 
-	return 0
+    local binary=${GH_BINARY}
+
+    # validation
+    gh_check
+
+    # logic
+    "${binary}" auth login --hostname github.com --git-protocol https --web
+    "${binary}" auth setup-git
+
+    printf "[INFO]\t Success.\n"
+    return 0
 }
 
-sync_repo() {
-	local REPO_NAME=$1
+function gh_logout {
+    printf "[INFO]\t Closing GitHub session.\n"
 
-	check_gh_binary
-	
-	if [ ! -d "${REPO_NAME}/.git" ]; then
-		printf "[INFO]\t Cloning private repository '%s'.\n" ${REPO_NAME} 
-		"${GH_BINARY}" repo clone "${ORGNAME}/${REPO_NAME}" "${REPO_NAME}" -- --branch "${GITBRANCH:-main}" > /dev/null 2>&1
-		pushd "${REPO_NAME}" > /dev/null
-		git submodule update --init --recursive > /dev/null 2>&1
-		popd > /dev/null
-	else
-		printf "[INFO]\t Local repository '%s' found. Forcing update.\n" ${REPO_NAME}
-		pushd "${REPO_NAME}" > /dev/null
-		git fetch origin "${GITBRANCH:-main}" #> /dev/null 2>&1
-		git reset --hard "origin/${GITBRANCH:-main}" #> /dev/null 2>&1
-		git submodule update --init --recursive #> /dev/null 2>&1
-		popd > /dev/null
-	fi
+    local configdir=${GH_CONFIGDIR:?}
+    
+    # logic
+    if [[ -d "${configdir}" ]]; then
+        rm --recursive --force "${configdir}" > /dev/null
+    fi
 
-	# Environment file setup using MODE
-	#if [ -f "${REPO_NAME}/.env.${realm}" ]; then
-	#	printf "[INFO]\t Applying configuration: .env.%s -> .env\n" ${realm}
-	#	ln -sf "./.env.${realm}" "${REPO_NAME}/.env" > /dev/null
-	#else
-	#	printf "[WARN]\t .env.%s not found in '%s'.\n" ${realm} ${REPO_NAME}
-	#	return 0
-	#fi
-
-	printf "[INFO]\t Repository '%s' successfully cloned.\n" ${REPO_NAME} 
-	return 0
+    printf "[INFO]\t Success.\n"
+    return 0
 }
 
+function gh_pull {
+    printf "[INFO] Pulling GitHub repository.\n"
 
+    local binary=${GH_BINARY}
+    local organization=${ORGANIZATION:?}
+    local name=$1
+    local branch=${2:-main}
 
-case "$COMMAND" in
-	login)
-		github_login
-		;;
-	logout)
-		github_logout
-		;;
-	install-core)
-		echo "${realm}"
-		sync_repo "${COMMONDIR}"
-		sync_repo "${COREDIR}"
-		pushd "${COREDIR}" > /dev/null
-		if [[ -f "./predeploy" ]]; then
-			bash "./predeploy" --realm "${realm}"
-		fi
-		popd > /dev/null
-		;;
-	install-periphery)
-		echo "${realm}"
-		sync_repo "${COMMONDIR}"
-		sync_repo "${PERIPHERYDIR}"
-		pushd "${PERIPHERYDIR}" > /dev/null
-		if [[ -f "./predeploy" ]]; then
-			bash "./predeploy" --realm "${realm}"
-		fi
-		popd > /dev/null
-		;;
-	install-npmplus)
-	    echo "${realm}"
-		sync_repo "${COMMONDIR}"
-		sync_repo "${NPMPLUSDIR}"
-		pushd "${NPMPLUSDIR}" > /dev/null
-		if [[ -f "./predeploy" ]]; then
-			bash "./predeploy" --realm "${realm}"
-		fi
-		popd > /dev/null
-		;;
-	run-core)
-		printf "[INFO]\t Deployment mode: %s.\n" ${realm}
-		pushd "${COREDIR}" > /dev/null
-		if [[ -f "./predeploy" ]]; then
-			bash "./predeploy" --realm "${realm}"
-		fi
-		docker compose -p ix-komodo-core up -d # usign ix- prefix for TrueNAS Scale compatibility
-		if [[ -f "./postdeploy" ]]; then
-			bash "./postdeploy" --realm "${realm}"
-		fi
-		popd > /dev/null
-		;;
-	run-periphery)
-		printf "[INFO]\t Deployment mode: %s.\n" ${realm}
-		pushd "${PERIPHERYDIR}" > /dev/null
-		if [[ -f "./predeploy" ]]; then
-			bash "./predeploy" --realm "${realm}"
-		fi
-		docker compose -p ix-komodo-periphery up -d # usign ix- prefix for TrueNAS Scale compatibility
-		if [[ -f "./postdeploy" ]]; then
-			bash "./postdeploy" --realm "${realm}"
-		fi
-		popd > /dev/null
-		;;
-	run-npmplus)
-		printf "[INFO]\t Deployment mode: %s.\n" ${realm}
-		pushd "${NPMPLUS}" > /dev/null
-		if [[ -f "./predeploy" ]]; then
-			bash "./predeploy" --realm "${realm}"
-		fi
-		docker compose -p ix-komodo-periphery up -d # usign ix- prefix for TrueNAS Scale compatibility
-		if [[ -f "./postdeploy" ]]; then
-			bash "./postdeploy" --realm "${realm}"
-		fi
-		popd > /dev/null
-		;;
-	stop-core)
-		pushd "${COREDIR}" > /dev/null
-		docker compose down
-		popd > /dev/null
-		;;
-	stop-periphery)
-		pushd "${PERIPHERYDIR}" > /dev/null
-		docker compose down
-		popd > /dev/null
-		;;
-	stop-npmplus)
-		pushd "${NPMPLUS}" > /dev/null
-		docker compose down
-		popd > /dev/null
-		;;
-	*)
-		show_help
-		;;
-esac
+    # validation
+    gh_check
+
+    if [[ -z "${name}" ]]; then
+        printf "[ERRO]\t Repository name must be provided.\n"
+        return 1
+    fi
+
+    # logic
+    if [[ ! -d "${name}" ]]; then
+        printf "[INFO]\t Initializing repository '%s'.\n" "${name}"
+
+        "${binary}" repo clone "${organization}/${name}" "./${name}" > /dev/null # 2>&1
+    fi
+
+    printf "[INFO]\t Updating repository '%s'.\n" "${name}"
+
+    pushd "./${name}" > /dev/null
+    "${binary}" repo sync --branch "${branch}" --force > /dev/null # 2>&1
+    git submodule update --init --recursive > /dev/null # 2>&1
+    popd > /dev/null
+
+    printf "[INFO]\t Success.\n"
+    return 0
+}
+
+function compose_start {
+    gh_pull
+}
+
+function compose_stop {
+
+}
+### END FUNCTIONS ##############################################################
+
+main "${@}"
