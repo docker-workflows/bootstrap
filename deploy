@@ -14,8 +14,8 @@ MOVE_START="\033[0G"
 CODE_ERRO="[${COLOR_RED}ERRO${COLOR_RESET}]\t"
 CODE_WRNG="[${COLOR_YELLOW}WRNG${COLOR_RESET}]\t"
 CODE_INFO="[${COLOR_CYAN}INFO${COLOR_RESET}]\t"
-CODE_SUCC="${MOVE_UP}${MOVE_START}[${COLOR_GREEN} OK ${COLOR_RESET}]${MOVE_DOWN}${MOVE_START}\t"
-CODE_FAIL="${MOVE_UP}${MOVE_START}[${COLOR_RED}FAIL${COLOR_RESET}]${MOVE_DOWN}${MOVE_START}\t"
+CODE_SUCC="${MOVE_UP}${MOVE_START}[${COLOR_GREEN} OK ${COLOR_RESET}]${MOVE_DOWN}${MOVE_START}"
+CODE_FAIL="${MOVE_UP}${MOVE_START}[${COLOR_RED}FAIL${COLOR_RESET}]${MOVE_DOWN}${MOVE_START}"
 
 ### ERROR MANAGEMENT ###########################################################
 
@@ -120,7 +120,7 @@ function gh_install {
     chmod +x "${binary}"
     rm --force "${tempfile}"
     printf "${CODE_SUCC}"
-    
+
 
     printf "${CODE_INFO} Downloading '%s'.\n" "${common}"
     gh_pull "${common}" 
