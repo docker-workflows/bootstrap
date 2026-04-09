@@ -24,7 +24,7 @@ PREDEPLOY="predeploy"
 
 function main {    
     local param1="${1:?A command must be provided.}"
-    local param2="${2}"
+    local param2="${2:-}"
 
     if [[ ! -x "${GH_BINARY}" ]]; then
         gh_install
