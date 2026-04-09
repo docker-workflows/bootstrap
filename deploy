@@ -8,10 +8,13 @@ COLOR_BLUE="\033[34m"
 COLOR_MAGENTA="\033[35m"
 COLOR_CYAN="\033[36m"
 COLOR_RESET="\033[0m"
+MOVE_UP="\033[1A"
+MOVE_DOWN="\033[1B"
+MOVE_START="\033[0G"
 CODE_ERRO="[${COLOR_RED}FAIL${COLOR_RESET}]\t"
 CODE_WRNG="[${COLOR_YELLOW}WRNG${COLOR_RESET}]\t"
 CODE_INFO="[${COLOR_CYAN}INFO${COLOR_RESET}]\t"
-CODE_SUCC="\033[0G[${COLOR_GREEN} OK ${COLOR_RESET}]\t"
+CODE_SUCC="${MOVE_UP}${MOVE_START}[${COLOR_GREEN} OK ${COLOR_RESET}]${MOVE_DOWN}${MOVE_START}\t"
 
 ### ERROR MANAGEMENT ###########################################################
 
@@ -115,35 +118,14 @@ function gh_install {
     tar --extract --gzip --strip-components=2 --directory="$(dirname "${binary}")" --file="${tempfile}" "gh_${version}_linux_amd64/bin/gh"
     chmod +x "${binary}"
     rm --force "${tempfile}"
-
-
-    #printf "${CODE_SUCC} Success.\n"
-    printf "\033[1A"   # subir 1 línea
-    printf "\033[0G"   # ir a columna 0
-
-    # sobrescribir SOLO los 4 primeros caracteres
     printf "${CODE_SUCC}"
-
-    
-    printf "\033[1B"   # bajar 1 línea
-    printf "\033[0G"   # ir a columna 0
 
 
     printf "${CODE_INFO} Downloading '%s'.\n" "${common}"
     gh_pull "${common}"
     #git clone "https://github.com/${ORGANIZATION}/${common}.git" "${common}"
-
-
-    #printf "${CODE_SUCC} Success.\n"
-    printf "\033[1A"   # subir 1 línea
-    printf "\033[0G"   # ir a columna 0
-
-    # sobrescribir SOLO los 4 primeros caracteres
     printf "${CODE_SUCC}"
 
-    
-    printf "\033[1B"   # bajar 1 línea
-    printf "\033[0G"   # ir a columna 0
     return 0
 }
 
