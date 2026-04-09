@@ -168,7 +168,7 @@ function gh_pull {
     printf "[INFO]\t Updating repository '%s'.\n" "${name}"
 
     pushd "./${name}" > /dev/null
-    "${binary}" repo sync --branch "${branch}" --force > /dev/null # 2>&1
+    "../${binary}" repo sync --branch "${branch}" --force > /dev/null # 2>&1
     git submodule update --init --recursive > /dev/null # 2>&1
     popd > /dev/null
 
