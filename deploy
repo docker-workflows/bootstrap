@@ -1,16 +1,16 @@
 #!/bin/bash
 
-### \033[31mERRO\033[0mR MANAGEMENT ###########################################################
+### ERROR MANAGEMENT ###########################################################
 
 set -euo pipefail
 
-function trap_\033[31mERRO\033[0mr {
-    printf "[\033[31mERRO\033[0m]\t An unexpected \033[31mERRO\033[0mr has ocurred. Exiting...\n"
+function trap_errorr {
+    printf "[\033[31mERRO\033[0m]\t An unexpected error has ocurred. Exiting...\n"
 }
 
-trap trap_\033[31mERRO\033[0mr ERR
+trap trap_error ERR
 
-### END \033[31mERRO\033[0mR MANAGEMENT #######################################################
+### END ERROR MANAGEMENT #######################################################
 
 
 GH_BINARY="./bin/gh"
