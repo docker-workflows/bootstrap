@@ -11,7 +11,7 @@ COLOR_RESET="\033[0m"
 CODE_ERRO="${CODE_ERRO}"
 CODE_WRNG="[${COLOR_YELLOW}WRNG${COLOR_RESET}]\t"
 CODE_INFO="[${COLOR_CYAN}INFO${COLOR_RESET}]\t"
-CODE_SUCC="[${COLOR_GREEN}SUCC${COLOR_RESET}]\t"
+CODE_SUCC="\033[0G[${COLOR_GREEN}SUCC${COLOR_RESET}]\t"
 
 ### ERROR MANAGEMENT ###########################################################
 
@@ -116,13 +116,29 @@ function gh_install {
     chmod +x "${binary}"
     rm --force "${tempfile}"
 
+    printf "\033[1A"   # subir 1 línea
+    printf "\033[0G"   # ir a columna 0
+
+    # sobrescribir SOLO los 4 primeros caracteres
+    printf "${CODE_SUCC}"
+
+    # bajar a la siguiente línea
+    printf "\033[1B"
+
     printf "${CODE_INFO} Downloading '%s'.\n" "${common}"
-    gh_pull "${common}" > /dev/null
+    gh_pull "${common}"
     #git clone "https://github.com/${ORGANIZATION}/${common}.git" "${common}"
 
 
-    printf "\r${CODE_SUCC}\n"
-    printf "texto de prueba\n"
+    #printf "${CODE_SUCC} Success.\n"
+    printf "\033[1A"   # subir 1 línea
+    printf "\033[0G"   # ir a columna 0
+
+    # sobrescribir SOLO los 4 primeros caracteres
+    printf "${CODE_SUCC}"
+
+    # bajar a la siguiente línea
+    printf "\033[1B"
     return 0
 }
 
@@ -138,7 +154,7 @@ function gh_login {
     "${binary}" auth login --hostname github.com --git-protocol https --web
     "${binary}" auth setup-git
 
-    printf "\r${CODE_SUCC}"
+    printf "${CODE_SUCC} Success.\n"
     return 0
 }
 
@@ -152,7 +168,7 @@ function gh_logout {
         rm --recursive --force "${configdir}" > /dev/null
     fi
 
-    printf "\r${CODE_SUCC}"
+    printf "${CODE_SUCC} Success.\n"
     return 0
 }
 
@@ -186,7 +202,7 @@ function gh_pull {
     git submodule update --init --recursive > /dev/null # 2>&1
     popd > /dev/null
 
-    printf "\r${CODE_SUCC}"
+    printf "${CODE_SUCC} Success.\n"
     return 0
 }
 
