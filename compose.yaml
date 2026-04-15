@@ -2,7 +2,7 @@
 services:
   pwsh:
     build: .
-    image: pwsh:7.6
+    image: pwsh:7.6.0
 
     container_name: powershell
     entrypoint: ["pwsh"]
@@ -18,4 +18,3 @@ services:
 #docker compose run pwsh
 # modo script
 #docker compose run pwsh ./job.ps1
-
