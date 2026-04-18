@@ -323,6 +323,8 @@ Set-StrictMode -Version Latest
 [string]$CommonToolsRepo = "common-tools"
 
 
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/usuario/repositorio/main/archivo.txt" -OutFile "archivo.txt"
+
 Switch ($Action) {
     "login" {
         if (Test-Repository) {
