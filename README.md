@@ -5,7 +5,7 @@
 Se debe tener creada la carpeta ``/mnt/tank0/apps`` que será la base de la infraestructura.
 
 ## Instalación
-wget -q https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/{bootstrap.ps1,compose.yaml} && export $PWD=$(pwd) && docker compose run pwsh -File ./bootstrap.ps1
+wget -q https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/{bootstrap.ps1,compose.yaml} && docker compose run pwsh -File ./bootstrap.ps1
 
 
 Como comando bash:

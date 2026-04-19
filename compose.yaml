@@ -10,4 +10,4 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - /mnt:/mnt:rw
-      - ./.config/gh:/root/.config/gh
+      - ${PWD}/.config/gh:/root/.config/gh
