@@ -20,3 +20,9 @@ docker run -it --rm -w "$(pwd)" -v "/mnt:/mnt" ghcr.io/bonzosoft/pwsh:latest pws
 ````bash
 docker run -it --rm -w "$(pwd)" -v "/mnt:/mnt" -v "$(pwd)/.config/gh:/root/.config/gh" -v "/var/run/docker.sock:/var/run/docker.sock" ghcr.io/bonzosoft/pwsh:7.6.0 pwsh ./bootstrap -Menu
 ````
+
+
+### OnPull
+````bash
+docker run --rm -w "$(pwd)" -v "/mnt:/mnt" ghcr.io/bonzosoft/pwsh:latest pwsh -File ./onpull.ps1
+````
