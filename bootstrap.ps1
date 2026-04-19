@@ -1,7 +1,7 @@
 [CmdletBinding(DefaultParameterSetName="Menu")]
 param(
     [Parameter(ParameterSetName="Menu")]
-    [swithc]$Menu,
+    [switch]$Menu,
 
     [Parameter(ParameterSetName="Command")]
     [ValidateSet("login", "logout", "setup", "pull", "start", "stop", "help")]
