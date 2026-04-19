@@ -396,31 +396,16 @@ switch ($PSCmdlet.ParameterSetName) {
     }
 }
 
-do {  
+do {
+    if ($Parameters["Action"] -eq "menu") {
+        $Parameters = Show-MainMenu
+    }
     Switch ($Parameters["Action"]) {
-        "menu" {
-            $Parameters = Show-MainMenu
-        }
         "login" {
-            if (Test-Repository) {
-                Write-Log -Level WARN -Message "Session already started, skipping."
-            }
-            else {
-                Connect-Repository -Hostname $Hostname
-            }
-            switch ($PSCmdlet.ParameterSetName) {
-                "Menu" {
-                    $Parameters["Action"] = "menu"
-                }
-                default {
-                    $Parameters["Action"] = "exit"
-                }
-            } 
+            Connect-Repository -Hostname $Hostname
         }
         "logout" {
-            if (Test-Repository) {
-                Disconnect-Repository -Hostname $Hostname
-            }
+            Disconnect-Repository -Hostname $Hostname
         }
         "setup" {
             Get-GithubRepo -Name $CommonToolsRepo

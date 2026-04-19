@@ -7,8 +7,7 @@ Se debe tener creada la carpeta ``/mnt/tank0/apps`` que será la base de la infr
 ## Instalación
 Descarga de los archivos necesarios desde bash:
 ````bash
-wget -qO bootstrap https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/bootstrap.ps1 && \
-wget -qO compose.yaml https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/compose.yaml
+wget -qO bootstrap https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/bootstrap.ps1 && wget -qO compose.yaml https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/compose.yaml
 ````
 o desde Powershell:
 ````powershell
