@@ -401,17 +401,17 @@ do {
             else {
                 Connect-Repository -Hostname $Hostname
             }
-            #$Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "logout" {
             if (Test-Repository) {
                 Disconnect-Repository -Hostname $Hostname
             }
-            #$Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "setup" {
             Get-GithubRepo -Name $CommonToolsRepo
-            #$Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "pull" {
             if (-not (Test-Repository)) {
@@ -422,7 +422,7 @@ do {
                 return
             }
             Get-GithubRepo -Name $Container
-            #$Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "start" {
             if (-not $Container) {
@@ -430,7 +430,7 @@ do {
                 return
             }
             Start-Compose -Name $Container
-            $Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "stop" {
             if (-not $Container) {
@@ -438,7 +438,7 @@ do {
                 return
             }
             Stop-Compose -Name $Container
-            $Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "help" {
             Write-Host "bootstrap"
@@ -465,7 +465,7 @@ do {
             Write-Host "  ./bootstrap -Action start -Container komodo-core"
             Write-Host "  ./bootstrap -Action stop -Container komodo-core"
             Write-Host ""
-            #$Action = "exit"
+            $Parameters["Action"] = "exit"
         }
         "exit" {
             return
