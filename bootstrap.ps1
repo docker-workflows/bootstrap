@@ -1,30 +1,82 @@
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName="Menu")]
 param(
-    [Parameter()]
-    [ValidateSet("menu", "login", "logout", "setup", "pull", "start", "stop", "help")]
-    [string]$Action = "menu",
+    [Parameter(ParameterSetName="Menu")]
+    [swithc]$Menu,
 
-    [Parameter()]
+    [Parameter(ParameterSetName="Command")]
+    [ValidateSet("login", "logout", "setup", "pull", "start", "stop", "help")]
+    [string]$Action = "help",
+
+    [Parameter(ParameterSetName="Command")]
     [ValidateNotNullOrEmpty()]
     [string]$Container
 )
-
-
 function Show-MainMenu {
     Clear-Host
-    Write-Host "=============================" -ForegroundColor Cyan
-    Write-Host "        MAIN MENU            " -ForegroundColor Cyan
-    Write-Host "============================="
+    Write-Host "========================="
+    Write-Host "===     MAIN MENU     ==="
+    Write-Host "========================="
 
     Write-Host ""
-    Write-Host "1. GitHub Login"
-    Write-Host "2. GitHub Logout"
-    Write-Host "3. Setup"
-    Write-Host "4. Servicios"
-    Write-Host "0. Exit"
+    Write-Host "11. GitHub Login"
+    Write-Host "12. GitHub Logout"
+    Write-Host "20.   Setup"
+    Write-Host "31.   Install Komodo Core"
+    Write-Host "32.     Start Komodo Core"
+    Write-Host "33.     Stop Komodo Core"
+    Write-Host "41.   Install Komodo Periphery"
+    Write-Host "42.     Start Komodo Periphery"
+    Write-Host "43.     Stop Komodo Periphery"
+    Write-Host "51.   Install NPMplus"
+    Write-Host "52.     Start NPMplus"
+    Write-Host "53.     Stop NPMplus"
+    Write-Host "q. Exit"
     Write-Host ""
 
-    return Read-Host "Selecciona una opción"
+    switch (Read-Host "Selecciona una opción") {
+        "11" {
+            return [hashtable]@{"Action" = "login"; "Target" = ""}
+        }
+        "12" {
+            return [hashtable]@{"Action" = "logout"; "Target" = ""}
+        }
+        "20" {
+            return [hashtable]@{"Action" = "setup"; "Target" = ""}
+        }
+        "31" {
+            return [hashtable]@{"Action" = "install"; "Target" = "komodo-core"}
+        }
+        "32" {
+            return [hashtable]@{"Action" = "start"; "Target" = "komodo-core"}
+        }
+        "33" {
+            return [hashtable]@{"Action" = "stop"; "Target" = "komodo-core"}
+        }
+        "41" {
+            return [hashtable]@{"Action" = "install"; "Target" = "komodo-periphery"}
+        }
+        "42" {
+            return [hashtable]@{"Action" = "start"; "Target" = "komodo-periphery"}
+        }
+        "43" {
+            return [hashtable]@{"Action" = "stop"; "Target" = "komodo-periphery"}
+        }
+        "51" {
+            return [hashtable]@{"Action" = "install"; "Target" = "npmplus"}
+        }
+        "52" {
+            return [hashtable]@{"Action" = "start"; "Target" = "npmplus"}
+        }
+        "53" {
+            return [hashtable]@{"Action" = "stop"; "Target" = "npmplus"}
+        }
+        "q" {
+            return [hahstable]@{"Action" = "exit"; "Target" = ""}
+        }
+        default {
+            return [hahstable]@{"Action" = "menu"; "Target" = ""}
+        }
+    }
 }
 
 function Write-Log {
@@ -314,8 +366,6 @@ function Stop-Compose {
     return
 }
 
-
-
 #Start-Transcript -Path "./transcript.log"
 
 Clear-Host
@@ -324,72 +374,104 @@ Set-StrictMode -Version Latest
 [string]$Hostname = "github.com"
 [string]$CommonToolsRepo = "common"
 
-Switch ($Action) {
-    "menu" {
-        Show-MainMenu
-    }
-    "login" {
-        if (Test-Repository) {
-            Write-Log -Level WARN -Message "Session already started, skipping."
-        }
-        else {
-            Connect-Repository -Hostname $Hostname
+switch ($PSCmdlet.ParameterSetName) {
+    "Menu" {
+        [hashtable]$Parameters = @{
+            "Action" = "Menu"
+            "Container" = ""
         }
     }
-    "logout" {
-        if (Test-Repository) {
-            Disconnect-Repository -Hostname $Hostname
+    "Command" {
+        [hashtable]$Parameters = @{
+            "Action" = $Action
+            "Container" = $Container
         }
-    }
-    "setup" {
-        Write-Host "To be developed."
-    }
-    "pull" {
-        if (-not (Test-Repository)) {
-            Write-Log -Level ERRO -Message "No active session. Please, login."
-        }
-        if (-not $Container) {
-            Write-Log -Level ERRO -Message "A container must be specified for action '$Action'."
-            return
-        }
-        Get-GithubRepo -Name $CommonToolsRepo
-        Get-GithubRepo -Name $Container
-    }
-    "start" {
-        if (-not $Container) {
-            Write-Log -Level ERRO -Message "A container must be specified for action '$Action'."
-            return
-        }
-        Start-Compose -Name $Container
-    }
-    "stop" {
-        if (-not $Container) {
-            Write-Log -Level ERRO -Message "A container must be specified for action '$Action'."
-            return
-        }
-        Stop-Compose -Name $Container
-    }
-    "help" {
-		Write-Host "bootstrap.ps1"
-		Write-Host ""
-        Write-Host "Usage: ./bootstrap -Action <action> [-Container <container>]"
-        Write-Host ""
-        Write-Host "Actions:"
-        Write-Host "  login                         Interactive login to Github via Device Code."
-        Write-Host "  logout                        Remove GH session credentials."
-        Write-Host "  setup                         Prepare everything for deployment."
-        Write-Host "  pull -Container <container>   Pull specified container."
-        Write-Host "  start -Container <container>  Start specified container."
-        Write-Host "  stop -Container <container>   Stop specified container."
-        Write-Host ""
-        Write-Host "Examples:"
-        Write-Host "  ./bootstrap -Action login"
-        Write-Host "  ./bootstrap -Action logout"
-        Write-Host "  ./bootstrap -Action pull -Container Komodo-Core"
-        Write-Host "  ./bootstrap -Action start -Container Komodo-Core"
-        Write-Host "  ./bootstrap -Action stop -Container Komodo-Core"
-		Write-Host ""
     }
 }
+
+do {  
+    Switch ($Parameters["Action"]) {
+        "Menu" {
+            $Parameters = Show-MainMenu
+        }
+        "Login" {
+            if (Test-Repository) {
+                Write-Log -Level WARN -Message "Session already started, skipping."
+            }
+            else {
+                Connect-Repository -Hostname $Hostname
+            }
+            #$Action = "exit"
+        }
+        "logout" {
+            if (Test-Repository) {
+                Disconnect-Repository -Hostname $Hostname
+            }
+            #$Action = "exit"
+        }
+        "setup" {
+            Get-GithubRepo -Name $CommonToolsRepo
+            #$Action = "exit"
+        }
+        "pull" {
+            if (-not (Test-Repository)) {
+                Write-Log -Level ERRO -Message "No active session. Please, login."
+            }
+            if (-not $Parameters["Target"]) {
+                Write-Log -Level ERRO -Message "A container must be specified for action '$Parameters["Action"]'."
+                return
+            }
+            Get-GithubRepo -Name $Container
+            #$Action = "exit"
+        }
+        "start" {
+            if (-not $Container) {
+                Write-Log -Level ERRO -Message "A container must be specified for action '$Parameters["Action"]'."
+                return
+            }
+            Start-Compose -Name $Container
+            $Action = "exit"
+        }
+        "stop" {
+            if (-not $Container) {
+                Write-Log -Level ERRO -Message "A container must be specified for action '$Parameters["Action"]'."
+                return
+            }
+            Stop-Compose -Name $Container
+            $Action = "exit"
+        }
+        "help" {
+            Write-Host "bootstrap"
+            Write-Host ""
+            Write-Host "Interactive:"
+            Write-Host "Usage: ./bootstrap -Menu"
+            Write-Host "Command line:"
+            Write-Host "Usage: ./bootstrap -Action <action> [-Container <container>]"
+            Write-Host ""
+            Write-Host "Actions:"
+            Write-Host "  login                         Interactive login to Github via Device Code."
+            Write-Host "  logout                        Remove GH session credentials."
+            Write-Host "  setup                         Prepare everything for deployment."
+            Write-Host "  pull -Container <container>   Pull specified container."
+            Write-Host "  start -Container <container>  Start specified container."
+            Write-Host "  stop -Container <container>   Stop specified container."
+            Write-Host "  help                          Show this help screen."
+            Write-Host ""
+            Write-Host "Examples:"
+            Write-Host "  ./bootstrap -Menu login"
+            Write-Host "  ./bootstrap -Action login"
+            Write-Host "  ./bootstrap -Action logout"
+            Write-Host "  ./bootstrap -Action pull -Container komodo-core"
+            Write-Host "  ./bootstrap -Action start -Container komodo-core"
+            Write-Host "  ./bootstrap -Action stop -Container komodo-core"
+            Write-Host ""
+            #$Action = "exit"
+        }
+        "exit" {
+            return
+        }
+    }
+    Start-Sleep -Milliseconds 100
+} while ($true)
 
 #Stop-Transcript
