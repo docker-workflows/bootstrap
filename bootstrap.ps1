@@ -89,7 +89,8 @@ function Show-MainMenu {
 }
 
 function Get-DockerUser {
-    (get-content /host/etc/group | ForEach-Object {if ($PSItem -match "^docker.*$"){$PSItem}}).Count
+    #(get-content /host/etc/group | ForEach-Object {if ($PSItem -match "^docker.*$"){$PSItem}}).Count
+    Get-Content -Path /host/etc/group | ForEach-Object { if ($PSItem -like "docker*") {$PSItem}}
 }
 
 function Test-Truenas {
