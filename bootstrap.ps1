@@ -271,15 +271,17 @@ function Get-GithubRepo {
         Write-Log -Level SUCC
     }
 
-    Write-Log -Level Info -Message "Running 'onpull.ps1'."
-    $output = pwsh -File "./onpull.ps1" *>&1
-    if ($LASTEXITCODE) {
-        Write-Log -Level ERRO
-        Write-Log -Level ERRO -Message "Error:`n$output"
-        return
-    }
-    else {
-        Write-Log -Level SUCC
+    if (Test-Path -Path "onpull.ps1") {
+        Write-Log -Level Info -Message "Running 'onpull.ps1'."
+        $output = pwsh -File "onpull.ps1" *>&1
+        if ($LASTEXITCODE) {
+            Write-Log -Level ERRO
+            Write-Log -Level ERRO -Message "Error:`n$output"
+            return
+        }
+        else {
+            Write-Log -Level SUCC
+        }
     }
 
     Pop-Location
@@ -378,7 +380,7 @@ if ($Command -eq "menu") {
         Clear-Host
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.12  ==="
+        Write-Host "===  Version: 00.02.13  ==="
         Write-Host "==========================="
         Write-Host ""
         Write-Host "GitHub"
