@@ -56,9 +56,11 @@ function Test-IsTruenas {
     }
     else {
         if ($Version.IsPresent) {
+            write-host "version"
             return [version]$null
         }
         else{
+            write-host "no version"
             return $false
         }
     }
@@ -368,7 +370,7 @@ if ($Command -eq "menu") {
         Clear-Host
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.01  ==="
+        Write-Host "===  Version: 00.02.02  ==="
         Write-Host "==========================="
         Write-Host ""
         Write-Host "GitHub"
@@ -466,6 +468,7 @@ if ($Command -eq "menu") {
         }
         Write-Host "$([char]8730) Correcto."
         Start-Sleep -Milliseconds 1000
+        Read-Host
     }
     while ($true)
 }
