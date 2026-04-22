@@ -1,91 +1,22 @@
-[CmdletBinding(DefaultParameterSetName="Menu")]
+[CmdletBinding()]
 param(
-    [Parameter(ParameterSetName="Menu")]
-    [switch]$Menu,
-
     [Parameter(ParameterSetName="Command")]
     [ValidateSet("login", "logout", "setup", "pull", "start", "stop", "help")]
-    [string]$Action = "help",
+    [string]$Action = "menu",
 
     [Parameter(ParameterSetName="Command")]
     [ValidateNotNullOrEmpty()]
-    [string]$Container
+    [string]$Target
 )
 
 
+[string]$Script:COMMON = "common"
+[string]$Script:HOSTNAME = "github.com"
+[IO.FileInfo]$Script:CONFIGFILE = Join-Path -Path $PSScriptRoot -ChildPath ".appsconfig.json"
+
+
 function Show-MainMenu {
-    Clear-Host
-    Write-Host "==========================="
-    Write-Host "===      MAIN MENU      ==="
-    Write-Host "===  Version: 00.01.03  ==="
-    Write-Host "==========================="
-
-    Write-Host ""
-    Write-Host "11. GitHub Login"
-    Write-Host "12. GitHub Logout"
-    Write-Host "13. Update bootstrap"
-    Write-Host "20.   Pull Common tools"
-    Write-Host "31.   Pull Komodo Core"
-    Write-Host "32.     Start Komodo Core"
-    Write-Host "33.     Stop Komodo Core"
-    Write-Host "41.   Pull Komodo Periphery"
-    Write-Host "42.     Start Komodo Periphery"
-    Write-Host "43.     Stop Komodo Periphery"
-    Write-Host "51.   Pull NPMplus"
-    Write-Host "52.     Start NPMplus"
-    Write-Host "53.     Stop NPMplus"
-    Write-Host " q. Exit"
-    Write-Host ""
-
-    switch (Read-Host "Selecciona una opción") {
-        "11" {
-            return [hashtable]@{"Action" = "login"; "Target" = ""}
-        }
-        "12" {
-            return [hashtable]@{"Action" = "logout"; "Target" = ""}
-        }
-        "13" {
-            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/bootstrap.ps1" -OutFile "bootstrap"
-            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/compose.yaml" -OutFile "compose.yaml"
-            return [hashtable]@{"Action" = "menu"; "Target" = ""}
-        }
-        "20" {
-            return [hashtable]@{"Action" = "pull"; "Target" = "$Script:CommonToolsRepo"}
-        }
-        "31" {
-            return [hashtable]@{"Action" = "pull"; "Target" = "komodo-core"}
-        }
-        "32" {
-            return [hashtable]@{"Action" = "start"; "Target" = "komodo-core"}
-        }
-        "33" {
-            return [hashtable]@{"Action" = "stop"; "Target" = "komodo-core"}
-        }
-        "41" {
-            return [hashtable]@{"Action" = "pull"; "Target" = "komodo-periphery"}
-        }
-        "42" {
-            return [hashtable]@{"Action" = "start"; "Target" = "komodo-periphery"}
-        }
-        "43" {
-            return [hashtable]@{"Action" = "stop"; "Target" = "komodo-periphery"}
-        }
-        "51" {
-            return [hashtable]@{"Action" = "pull"; "Target" = "npmplus"}
-        }
-        "52" {
-            return [hashtable]@{"Action" = "start"; "Target" = "npmplus"}
-        }
-        "53" {
-            return [hashtable]@{"Action" = "stop"; "Target" = "npmplus"}
-        }
-        "q" {
-            return [hashtable]@{"Action" = "exit"; "Target" = ""}
-        }
-        default {
-            return [hashtable]@{"Action" = "menu"; "Target" = ""}
-        }
-    }
+    
 }
 
 function Get-DockerUser {
@@ -409,59 +340,132 @@ function Stop-Compose {
     return
 }
 
-#Start-Transcript -Path "./transcript.log"
-
 Clear-Host
 Set-StrictMode -Version Latest
 
-[string]$Script:CommonToolsRepo = "common"
-[string]$Script:Hostname = "github.com"
 
-switch ($PSCmdlet.ParameterSetName) {
-    "Menu" {
-        [hashtable]$Parameters = @{
-            "Action" = "Menu"
-            "Container" = ""
+
+if ($Command -eq "menu") {  
+    do {
+        Clear-Host
+        Write-Host "==========================="
+        Write-Host "===      MAIN MENU      ==="
+        Write-Host "===  Version: 00.02.01  ==="
+        Write-Host "==========================="
+        Write-Host ""
+        Write-Host "GitHub"
+        Write-Host "  1.  Login"
+        Write-Host "  2.  Logout"
+        Write-Host ""
+        Write-Host "System"
+        Write-Host "  3.  Pull Bootstrap"
+        Write-Host "  4.  Pull Common"
+        Write-Host ""
+        Write-Host "Komodo Core"
+        Write-Host "  5.  Pull"
+        Write-Host "  6.  Start" -ForegroundColor Gray
+        Write-Host "  7.  Stop" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "Komodo Periphery"
+        Write-Host "  8.  Pull"
+        Write-Host "  9.  Start" -ForegroundColor Gray
+        Write-Host "  10. Stop" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "NPMplus"
+        Write-Host "  11. Pull"
+        Write-Host "  12. Start" -ForegroundColor Gray
+        Write-Host "  10. Stop" -ForegroundColor Gray
+        Write-Host ""       
+        Write-Host "  q.  Exit"
+        Write-Host ""
+    
+        switch (Read-Host "Selecciona una opción") {
+            "1" {
+                Connect-Repository -Hostname $Script:HOSTNAME
+            }
+            "2" {
+                Disconnect-Repository -Hostname $Script:HOSTNAME
+            }
+            "3" {
+                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/bootstrap.ps1" -OutFile "bootstrap"
+                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/compose.yaml" -OutFile "compose.yaml"
+            }
+            "4" {
+                Get-GithubRepo -Name $Script:COMMON
+
+                #. Join-Path -Path $PSScriptRoot -ChildPath $Script:COMMON -AdditionalChildPath "common.ps1"
+    
+                [hashtable]$CONFIGJSON = @{}
+                $CONFIGJSON["IsTrueNAS"] = Test-IsTruenas
+                $CONFIGJSON["DockerPGID"] = Get-DockerUser
+                $CONFIGJSON | ConvertTo-Json | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
+            }
+            "5" {
+                if (-not (Test-Repository)) {
+                    Write-Log -Level ERRO -Message "No active session. Please, login."
+                }
+                Get-GithubRepo -Name "komodo-core"
+            }
+            "6" {
+                #Start-Compose -Name "komodo-core"
+            }
+            "7" {
+                #Stop-Compose -Name "komodo-core"
+            }
+            "8" {
+                if (-not (Test-Repository)) {
+                    Write-Log -Level ERRO -Message "No active session. Please, login."
+                }
+                Get-GithubRepo -Name "komodo-periphery"
+            }
+            "9" {
+                #Start-Compose -Name "komodo-periphery"
+            }
+            "10" {
+                #Stop-Compose -Name "komodo-periphery"
+            }
+            "11" {
+                if (-not (Test-Repository)) {
+                    Write-Log -Level ERRO -Message "No active session. Please, login."
+                }
+                Get-GithubRepo -Name "npmplus"
+            }
+            "12" {
+                #Start-Compose -Name "npmplus"
+            }
+            "13" {
+                #Stop-Compose -Name "npmplus"
+            }
+            "q" {
+                break
+            }
+            default {
+                continue
+            }
         }
+        Start-Sleep -Milliseconds 1000
     }
-    "Command" {
-        [hashtable]$Parameters = @{
-            "Action" = $Action
-            "Container" = $Container
-        }
-    }
+    while ($true)
 }
+else {
+    return
 
-do {
-    if ($Parameters["Action"] -eq "menu") {
-        $Parameters = Show-MainMenu
-    }
-    Switch ($Parameters["Action"]) {
-        "menu" {
-            # nop
-        }
+    <#
+    switch ($Action) {
         "login" {
-            Connect-Repository -Hostname $Script:Hostname
+            Connect-Repository -Hostname $Script:HOSTNAME
         }
         "logout" {
-            Disconnect-Repository -Hostname $Script:Hostname
+            Disconnect-Repository -Hostname $Script:HOSTNAME
         }
         "setup" {
-            Get-GithubRepo -Name $Script:CommonToolsRepo
-
-            [hashtable]$options = @{}
-            . Join-Path -Path $PSScriptRoot -ChildPath $Script:CommonToolsRepo -AdditionalChildPath "common.ps1"
-
-            $options["IsTrueNAS"] = Test-IsTruenas
-            $options["DockerPGID"] = Get-DockerUser
-            $options | ConvertTo-Json | Set-Content -Path Script:ConfigFile -Encoding UTF8
 
         }
         "pull" {
             if (-not (Test-Repository)) {
                 Write-Log -Level ERRO -Message "No active session. Please, login."
             }
-            if (-not $Parameters["Target"]) {
+            if (-not $Target.IsPresent) {
                 Write-Log -Level ERRO -Message "A container must be specified for action '$Parameters["Action"]'."
                 return
             }
@@ -479,7 +483,6 @@ do {
                 Write-Log -Level ERRO -Message "A container must be specified for action '$Parameters["Action"]'."
                 return
             }
-            Stop-Compose -Name $Parameters["Target"]
         }
         "help" {
             Write-Host "bootstrap"
@@ -507,23 +510,6 @@ do {
             Write-Host "  ./bootstrap -Action stop -Container komodo-core"
             Write-Host ""
         }
-        "exit" {
-            return
-        }
-        default {
-            Write-Log -Level ERRO -Message "Unexpected option '$($Parameters["Action"])'."
-            return
-        }
     }
-    switch ($PSCmdlet.ParameterSetName) {
-        "Menu" {
-            Start-Sleep -Milliseconds 750
-            $Parameters["Action"] = "menu"
-        }
-        default {
-            $Parameters["Action"] = "exit"
-        }
-    }
-} while ($true)
-
-#Stop-Transcript
+    #>
+}
