@@ -271,8 +271,17 @@ function Get-GithubRepo {
         Write-Log -Level SUCC
     }
 
+    Write-Log -Level Info -Message "Running 'onpull.ps1'."
     pwsh -File "./onpull.ps1"
-    
+    if ($LASTEXITCODE) {
+        Write-Log -Level ERRO
+        Write-Log -Level ERRO -Message $output
+        return
+    }
+    else {
+        Write-Log -Level SUCC
+    }
+
     Pop-Location
 
     return
@@ -369,7 +378,7 @@ if ($Command -eq "menu") {
         Clear-Host
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.09  ==="
+        Write-Host "===  Version: 00.02.10  ==="
         Write-Host "==========================="
         Write-Host ""
         Write-Host "GitHub"
