@@ -23,7 +23,8 @@ function Get-DockerPGID {
     #(get-content /host/etc/group | ForEach-Object {if ($PSItem -match "^docker.*$"){$PSItem}}).Count
     [string[]]$group= @(Get-Content -Path "/host/etc/group" | ForEach-Object { if ($PSItem -like "docker:*") {$PSItem}})
     if ( $group.Count -eq 1) {
-        return $group.Split(":")[3]
+        $group[0]
+        return $group[0].Split(":")[3]
     }
     else {
         if ($group.Count -eq 0) {
@@ -55,11 +56,9 @@ function Test-IsTruenas {
     }
     else {
         if ($Version.IsPresent) {
-            write-host "version"
             return [version]$null
         }
         else{
-            write-host "no version"
             return $false
         }
     }
@@ -369,7 +368,7 @@ if ($Command -eq "menu") {
         Clear-Host
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.03  ==="
+        Write-Host "===  Version: 00.02.04  ==="
         Write-Host "==========================="
         Write-Host ""
         Write-Host "GitHub"
@@ -417,9 +416,6 @@ if ($Command -eq "menu") {
                 [hashtable]$CONFIGJSON = @{}
                 $CONFIGJSON["IsTrueNAS"] = Test-IsTruenas
                 $CONFIGJSON["DockerPGID"] = Get-DockerPGID
-                $CONFIGJSON
-                Write-Host $CONFIGJSON["IsTrueNAS"]
-                Write-Host $CONFIGJSON["DockerPGID"]
                 $CONFIGJSON | ConvertTo-Json -Depth 9 | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
             }
             "5" {
