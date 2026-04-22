@@ -238,7 +238,7 @@ function Get-GithubRepo {
         $output = gh repo clone "$Organization/$Name" "./$Name" *>&1
         if ($LASTEXITCODE) {
             Write-Log -Level ERRO
-            Write-Log -Level ERRO -Message $output
+            Write-Log -Level ERRO -Message "Error:`n$output"
             return
         }
         else {
@@ -252,7 +252,7 @@ function Get-GithubRepo {
     $output = gh repo sync --branch $Branch --force *>&1
     if ($LASTEXITCODE) {
         Write-Log -Level ERRO
-        Write-Log -Level ERRO -Message $output
+        Write-Log -Level ERRO -Message "Error:`n$output"
         return
     }
     else {
@@ -264,7 +264,7 @@ function Get-GithubRepo {
     $output = git submodule update --init --recursive *>&1
     if ($LASTEXITCODE) {
         Write-Log -Level ERRO
-        Write-Log -Level ERRO -Message $output
+        Write-Log -Level ERRO -Message "Error:`n$output"
         return
     }
     else {
@@ -275,7 +275,7 @@ function Get-GithubRepo {
     $output = pwsh -File "./onpull.ps1" *>&1
     if ($LASTEXITCODE) {
         Write-Log -Level ERRO
-        Write-Log -Level ERRO -Message $output
+        Write-Log -Level ERRO -Message "Error:`n$output"
         return
     }
     else {
