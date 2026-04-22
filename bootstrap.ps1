@@ -26,6 +26,8 @@ function Get-DockerPGID {
         Write-Host $group
         Write-Host $group[0]
         Write-Host $group[0].Split(":")
+        Write-Host $group[0].Split(":")[3]
+        Write-Host ($group[0].Split(":"))[3]
         return $group[0].Split(":")[3]
     }
     else {
