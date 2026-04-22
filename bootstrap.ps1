@@ -38,7 +38,7 @@ function Get-DockerPGID {
 
 
 function Test-IsTruenas {
-    [CmdletBinding(DefaultParameterSetName="Exists")]
+    [CmdletBinding()]
 
     param(
         [Parameter(ParameterSetName="Version")]
