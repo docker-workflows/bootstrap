@@ -11,6 +11,7 @@ param(
 
 
 Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
 
 [string]$Script:COMMON = "common"
