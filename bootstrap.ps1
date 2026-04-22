@@ -1,10 +1,10 @@
 [CmdletBinding()]
 param(
-    [Parameter(ParameterSetName="Command")]
+    [Parameter()]
     [ValidateSet("login", "logout", "setup", "pull", "start", "stop", "help")]
-    [string]$Action = "menu",
+    [string]$Command = "menu",
 
-    [Parameter(ParameterSetName="Command")]
+    [Parameter()]
     [ValidateNotNullOrEmpty()]
     [string]$Target
 )
@@ -451,7 +451,7 @@ else {
     return
 
     <#
-    switch ($Action) {
+    switch ($Command) {
         "login" {
             Connect-Repository -Hostname $Script:HOSTNAME
         }
