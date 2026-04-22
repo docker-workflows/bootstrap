@@ -20,7 +20,7 @@ docker run -it --rm -w "$(pwd)" -v "/mnt:/mnt" ghcr.io/bonzosoft/pwsh:latest pws
 
 #### Docker Compose
 ````bash
-docker compose run --rm pwsh pwsh ./bootstrap
+docker compose run --rm worker pwsh ./bootstrap
 ````
 
 #### Docker CLI
