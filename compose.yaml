@@ -1,5 +1,5 @@
 services:
-  pwsh:
+  worker:
     image: ghcr.io/bonzosoft/pwsh:latest
     working_dir: ${PWD}
     #entrypoint: ["pwsh"]
