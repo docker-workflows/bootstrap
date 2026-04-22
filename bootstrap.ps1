@@ -271,6 +271,8 @@ function Get-GithubRepo {
         Write-Log -Level SUCC
     }
 
+    pwsh -File "./onpull.ps1"
+    
     Pop-Location
 
     return
