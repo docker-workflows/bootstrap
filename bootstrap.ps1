@@ -10,21 +10,33 @@ param(
 )
 
 
+Set-StrictMode -Version Latest
+
+
 [string]$Script:COMMON = "common"
 [string]$Script:HOSTNAME = "github.com"
 [IO.FileInfo]$Script:CONFIGFILE = Join-Path -Path $PSScriptRoot -ChildPath ".appsconfig.json"
 
 
-function Show-MainMenu {
-    
-}
-
-function Get-DockerUser {
+function Get-DockerPGID {
     #(get-content /host/etc/group | ForEach-Object {if ($PSItem -match "^docker.*$"){$PSItem}}).Count
-    Get-Content -Path /host/etc/group | ForEach-Object { if ($PSItem -like "docker*") {$PSItem}}
+    $group= Get-Content -Path "/host/etc/group" | ForEach-Object { if ($PSItem -like "docker:*") {$PSItem}}
+    if ($group.Count -eq 1) {
+        return $group.Split(":")[3]
+    }
+    else {
+        if ($group.Count -eq 0) {
+            Write-Error -Message "'docker' group not found."
+        }
+        else {
+            Write-Error -Message "Unexpected number of 'docker' groups found."
+        }
+    }
+    return $null
 }
 
-function Test-Truenas {
+
+function Test-IsTruenas {
     [CmdletBinding(DefaultParameterSetName="Exists")]
     [OuptutType([bool], "Exists")]
     [OuptutType([version], "Version")]
@@ -51,6 +63,7 @@ function Test-Truenas {
         }
     }
 }
+
 
 function Write-Log {
     [CmdletBinding()]
@@ -116,6 +129,7 @@ function Write-Log {
     return
 }
 
+
 function Connect-Repository {
     [CmdletBinding()]
 
@@ -152,6 +166,7 @@ function Connect-Repository {
     return
 }
 
+
 function Disconnect-Repository {
     [CmdletBinding()]
 
@@ -183,6 +198,7 @@ function Disconnect-Repository {
     return
 }
 
+
 function Test-Repository {
     [CmdletBinding()]
 
@@ -196,6 +212,7 @@ function Test-Repository {
         return $True
     }
 }
+
 
 function Get-GithubRepo {
     [CmdletBinding()]
@@ -260,6 +277,7 @@ function Get-GithubRepo {
     return
 }
 
+
 function Start-Compose {
     param(
         [Parameter(Mandatory)]
@@ -314,6 +332,7 @@ function Start-Compose {
     return
 }
 
+
 function Stop-Compose {
     param(
         [Parameter(Mandatory)]
@@ -340,12 +359,11 @@ function Stop-Compose {
     return
 }
 
-Clear-Host
-Set-StrictMode -Version Latest
 
-
-
-if ($Command -eq "menu") {  
+if ($Command -eq "menu") {
+    Write-Host "Pulsa una tecla para iniciar..."
+    Read-Host
+    Clear-Host
     do {
         Clear-Host
         Write-Host "==========================="
@@ -397,7 +415,7 @@ if ($Command -eq "menu") {
     
                 [hashtable]$CONFIGJSON = @{}
                 $CONFIGJSON["IsTrueNAS"] = Test-IsTruenas
-                $CONFIGJSON["DockerPGID"] = Get-DockerUser
+                $CONFIGJSON["DockerPGID"] = Get-DockerPGID
                 $CONFIGJSON | ConvertTo-Json | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
             }
             "5" {
