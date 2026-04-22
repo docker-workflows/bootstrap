@@ -41,7 +41,7 @@ function Test-IsTruenas {
     [CmdletBinding()]
 
     param(
-        [Parameter(ParameterSetName="Version")]
+        [Parameter()]
         [switch]$Version
     )
     [IO.FileInfo]$versionFile = "/host/etc/version"
