@@ -372,7 +372,7 @@ if ($Command -eq "menu") {
         Clear-Host
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.06  ==="
+        Write-Host "===  Version: 00.02.07  ==="
         Write-Host "==========================="
         Write-Host ""
         Write-Host "GitHub"
@@ -467,7 +467,7 @@ if ($Command -eq "menu") {
         }
         Write-Host "$([char]8730) Correcto."
         Start-Sleep -Milliseconds 1000
-        Read-Host
+        #Read-Host
     }
     while ($true)
 }
