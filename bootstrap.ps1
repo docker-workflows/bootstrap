@@ -417,7 +417,7 @@ if ($Command -eq "menu") {
                 [hashtable]$CONFIGJSON = @{}
                 $CONFIGJSON["IsTrueNAS"] = Test-IsTruenas
                 $CONFIGJSON["DockerPGID"] = Get-DockerPGID
-                $CONFIGJSON | ConvertTo-Json | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
+                $CONFIGJSON | ConvertTo-Json -Depth 9 | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
             }
             "5" {
                 if (-not (Test-Repository)) {
