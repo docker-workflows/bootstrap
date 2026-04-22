@@ -455,7 +455,7 @@ if ($Command -eq "menu") {
                 #Stop-Compose -Name "npmplus"
             }
             "q" {
-                break
+                exit 0
             }
             default {
                 continue
