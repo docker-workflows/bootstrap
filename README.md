@@ -32,3 +32,10 @@ docker run -it --rm -w "$(pwd)" -v "/mnt:/mnt" -v "$(pwd)/.config/gh:/root/.conf
 ````bash
 docker run --rm -w "$(pwd)" -v "/mnt:/mnt" -e TERM=dumb ghcr.io/bonzosoft/pwsh:latest pwsh -File ./onclone.ps1 -Realm production
 ````
+
+## Depuración
+````pwsh
+Import-Module ./common/posh-Docker
+$compose = Get-DockerCompose -Path ./compose.yaml
+Get-DockerVolumes -Data $compose
+````
