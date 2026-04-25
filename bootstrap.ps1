@@ -397,7 +397,7 @@ if ($Command -eq "menu") {
         Write-Host "===      MAIN MENU      ==="
         Write-Host "===  Version: 00.02.26  ==="
         Write-Host "==========================="
-        Write-Host "Current Realm: $((Get-Content -Path $Script:CONFIGFILE -Enconding utf8 | ConvertFrom-Json).REALM)"
+        Write-Host "Current Realm: $((Get-Content -Path $Script:CONFIGFILE | ConvertFrom-Json).REALM)"
         Write-Host "GitHub"
         Write-Host "  1.  Login"
         Write-Host "  2.  Logout"
@@ -406,19 +406,17 @@ if ($Command -eq "menu") {
         Write-Host "  4.  Pull Common"
         Write-Host "  5.  Set Realm"
         Write-Host "Komodo Core"
-        Write-Host "  5.  Pull"
-        Write-Host "  6.  Start" -ForegroundColor DarkGray
-        Write-Host "  7.  Stop" -ForegroundColor DarkGray
-        Write-Host "" 
+        Write-Host "  6.  Pull"
+        Write-Host "  7.  Start" -ForegroundColor DarkGray
+        Write-Host "  8.  Stop" -ForegroundColor DarkGray
         Write-Host "Komodo Periphery"
-        Write-Host "  8.  Pull"
-        Write-Host "  9.  Start" -ForegroundColor DarkGray
-        Write-Host "  10. Stop" -ForegroundColor DarkGray
-        Write-Host ""
+        Write-Host "  9.  Pull"
+        Write-Host "  10.  Start" -ForegroundColor DarkGray
+        Write-Host "  11. Stop" -ForegroundColor DarkGray
         Write-Host "NPMplus"
-        Write-Host "  11. Pull"
-        Write-Host "  12. Start" -ForegroundColor DarkGray
-        Write-Host "  10. Stop" -ForegroundColor DarkGray
+        Write-Host "  12. Pull"
+        Write-Host "  13. Start" -ForegroundColor DarkGray
+        Write-Host "  14. Stop" -ForegroundColor DarkGray
         Write-Host ""       
         Write-Host "  q.  Exit"
         Write-Host ""
@@ -438,45 +436,41 @@ if ($Command -eq "menu") {
             }
             "4" {
                 Get-GithubRepo -Name $Script:COMMON
-
-                #. Join-Path -Path $PSScriptRoot -ChildPath $Script:COMMON -AdditionalChildPath "common.ps1"
-    
-
             }
-            "5" {
+            "6" {
                 if (-not (Test-Repository)) {
                     Write-Log -Level ERRO -Message "No active session. Please, login."
                 }
                 Get-GithubRepo -Name "komodo-core"
             }
-            "6" {
+            "7" {
                 #Start-Compose -Name "komodo-core"
             }
-            "7" {
+            "8" {
                 #Stop-Compose -Name "komodo-core"
             }
-            "8" {
+            "9" {
                 if (-not (Test-Repository)) {
                     Write-Log -Level ERRO -Message "No active session. Please, login."
                 }
                 Get-GithubRepo -Name "komodo-periphery"
             }
-            "9" {
+            "10" {
                 #Start-Compose -Name "komodo-periphery"
             }
-            "10" {
+            "11" {
                 #Stop-Compose -Name "komodo-periphery"
             }
-            "11" {
+            "12" {
                 if (-not (Test-Repository)) {
                     Write-Log -Level ERRO -Message "No active session. Please, login."
                 }
                 Get-GithubRepo -Name "npmplus"
             }
-            "12" {
+            "13" {
                 #Start-Compose -Name "npmplus"
             }
-            "13" {
+            "14" {
                 #Stop-Compose -Name "npmplus"
             }
             "q" {
