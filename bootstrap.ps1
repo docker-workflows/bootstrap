@@ -428,7 +428,7 @@ if ($Command -eq "menu") {
             "3" {
                 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/bootstrap.ps1" -OutFile "bootstrap.ps1"
                 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/compose.yaml" -OutFile "compose.yaml"
-                Start-Process -FilePath (Join-Path $PSScriptRoot $PSCommandPath)
+                Start-Process -FilePath (Join-Path $PSCommandPath)
                 exit 0
             }
             "4" {
