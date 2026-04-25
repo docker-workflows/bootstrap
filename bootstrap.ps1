@@ -7,8 +7,12 @@ param(
     [string]$Command = "menu",
 
     [Parameter()]
-    [ValidateNotNullOrEmpty()]
-    [string]$Target
+    [ValidateNotNullOrWhiteSpace()]
+    [string]$Target,
+
+    [Parameter()]
+    [ValidateSet("prod", "dev")]
+    [string]$Realm = "prod"
 )
 
 Set-StrictMode -Version Latest
@@ -380,6 +384,7 @@ $CONFIGJSON["PUID"]=$PUID
 $CONFIGJSON["PGID"]=$PGID
 $CONFIGJSON["DOCKER_PGID"] = Get-DockerPGID
 $CONFIGJSON["TRUENAS"] = Test-IsTruenas
+$CONFIGJSON["REALM"] = $Realm
 $CONFIGJSON | ConvertTo-Json | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
 
 if ($Command -eq "menu") {
@@ -389,7 +394,7 @@ if ($Command -eq "menu") {
         Clear-Host
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.23  ==="
+        Write-Host "===  Version: 00.02.24  ==="
         Write-Host "==========================="
         Write-Host ""
         Write-Host "GitHub"
@@ -428,7 +433,7 @@ if ($Command -eq "menu") {
             "3" {
                 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/bootstrap.ps1" -OutFile "bootstrap.ps1"
                 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bonzosoft/bootstrap/pwsh/compose.yaml" -OutFile "compose.yaml"
-                Start-Process -FilePath $PSCommandPath
+                Start-Process -FilePath pwsh -ArgumentList @("-File $PSCommandPath")
                 exit 0
             }
             "4" {
