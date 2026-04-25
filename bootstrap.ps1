@@ -385,26 +385,26 @@ $CONFIGJSON["PGID"]=$PGID
 $CONFIGJSON["DOCKER_PGID"] = Get-DockerPGID
 $CONFIGJSON["TRUENAS"] = Test-IsTruenas
 $CONFIGJSON["REALM"] = $Realm
-$CONFIGJSON | ConvertTo-Json | Set-Content -Path $Script:CONFIGFILE -Encoding UTF8
+$CONFIGJSON | ConvertTo-Json | Set-Content -Path $Script:CONFIGFILE -Encoding utf8
 
 if ($Command -eq "menu") {
     Clear-Host
 
     do {
         Clear-Host
+        Write-Host ""
         Write-Host "==========================="
         Write-Host "===      MAIN MENU      ==="
-        Write-Host "===  Version: 00.02.25  ==="
+        Write-Host "===  Version: 00.02.26  ==="
         Write-Host "==========================="
-        Write-Host ""
+        Write-Host "Current Realm: $((Get-Content -Path $Script:CONFIGFILE -Enconding utf8 | ConvertFrom-Json).REALM)"
         Write-Host "GitHub"
         Write-Host "  1.  Login"
         Write-Host "  2.  Logout"
-        Write-Host ""
         Write-Host "System"
         Write-Host "  3.  Pull Bootstrap"
         Write-Host "  4.  Pull Common"
-        Write-Host ""
+        Write-Host "  5.  Set Realm"
         Write-Host "Komodo Core"
         Write-Host "  5.  Pull"
         Write-Host "  6.  Start" -ForegroundColor DarkGray
